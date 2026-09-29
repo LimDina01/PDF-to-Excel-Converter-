@@ -1,0 +1,7 @@
+venv/
+*.exe
+*.pdf
+__pycache__/
+*.csv
+*.xlsx
+.vscode/
