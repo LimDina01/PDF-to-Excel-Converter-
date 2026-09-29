@@ -1,3 +1,8 @@
+"""
+ABA Bank Statement to CSV/Excel Converter
+Made by: Lim Dina
+"""
+
 import pdfplumber
 import pandas as pd
 import sys
