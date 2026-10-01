@@ -7,7 +7,7 @@ import os
 class ConverterApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("ABA Bank Statement Converter")
+        self.root.title("Universal Bank Statement Converter")
         
         window_width = 500
         window_height = 310
@@ -49,6 +49,17 @@ class ConverterApp:
         
         btn_browse = ttk.Button(file_frame, text="Browse PDF", command=self.browse_file)
         btn_browse.pack(side=tk.RIGHT)
+        
+        # Bank Selection Frame
+        bank_frame = ttk.Frame(frame)
+        bank_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        ttk.Label(bank_frame, text="Select Bank Format:").pack(side=tk.LEFT)
+        
+        self.bank_var = tk.StringVar(value="Auto-Detect")
+        banks = ["Auto-Detect", "ABA", "CANADIA", "FTB", "BRED", "ACLEDA"]
+        self.bank_dropdown = ttk.Combobox(bank_frame, textvariable=self.bank_var, values=banks, state="readonly", width=15)
+        self.bank_dropdown.pack(side=tk.LEFT, padx=(10, 0))
         
         # Status Label
         self.status_label = ttk.Label(frame, text="", foreground="blue")
@@ -110,9 +121,10 @@ class ConverterApp:
         self.root.update()
         
         # Run conversion in a separate thread so UI doesn't freeze
-        threading.Thread(target=self.run_conversion, args=(self.pdf_path, output_path), daemon=True).start()
+        selected_bank = self.bank_var.get()
+        threading.Thread(target=self.run_conversion, args=(self.pdf_path, output_path, selected_bank), daemon=True).start()
         
-    def run_conversion(self, input_path, output_path):
+    def run_conversion(self, input_path, output_path, selected_bank):
         try:
             def update_progress(current, total):
                 percent = (current / total) * 100
@@ -121,7 +133,7 @@ class ConverterApp:
 
             # We call the exact same logic we built earlier!
             include_summary = self.include_summary_var.get()
-            success = extract_bank_statement(input_path, output_path, progress_callback=update_progress, include_summary=include_summary)
+            success = extract_bank_statement(input_path, output_path, progress_callback=update_progress, include_summary=include_summary, bank=selected_bank)
             
             if success:
                 self.root.after(0, lambda: self.conversion_success(output_path))
