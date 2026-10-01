@@ -8,7 +8,15 @@ class ConverterApp:
     def __init__(self, root):
         self.root = root
         self.root.title("ABA Bank Statement Converter")
-        self.root.geometry("500x250")
+        
+        window_width = 500
+        window_height = 310
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        center_x = int(screen_width / 2 - window_width / 2)
+        center_y = int(screen_height / 2 - window_height / 2)
+        
+        self.root.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
         self.root.resizable(False, False)
         
         # Use native Windows styling
@@ -26,7 +34,11 @@ class ConverterApp:
         
         # Title Label
         title = ttk.Label(frame, text="Bank Statement to CSV/Excel", font=("Segoe UI", 16, "bold"))
-        title.pack(pady=(0, 20))
+        title.pack(pady=(0, 5))
+        
+        # Disclaimer under title
+        disclaimer = ttk.Label(frame, text="⚠️ Disclaimer: Converted data may not be 100% accurate. Please review before use.", font=("Segoe UI", 8), foreground="red")
+        disclaimer.pack(pady=(0, 15))
         
         # File Selection Frame
         file_frame = ttk.Frame(frame)
@@ -40,15 +52,30 @@ class ConverterApp:
         
         # Status Label
         self.status_label = ttk.Label(frame, text="", foreground="blue")
-        self.status_label.pack(pady=10)
+        self.status_label.pack(pady=(10, 5))
         
+        # Progress Bar (hidden initially)
+        self.progress_var = tk.DoubleVar()
+        self.progress = ttk.Progressbar(frame, variable=self.progress_var, maximum=100)
+        
+        # Checkbox for Summary Rows
+        self.include_summary_var = tk.BooleanVar(value=False)
+        self.chk_summary = ttk.Checkbutton(frame, text="Include Opening/Closing Balances and Summary Details", variable=self.include_summary_var)
+        self.chk_summary.pack(pady=(5, 0))
+
         # Convert Button
         self.btn_convert = ttk.Button(frame, text="Convert to Excel / CSV", command=self.convert_file, state=tk.DISABLED)
         self.btn_convert.pack(fill=tk.X, pady=10, ipady=5)
         
-        # Footer
-        footer = ttk.Label(frame, text="Made by Lim Dina", font=("Segoe UI", 8), foreground="gray")
-        footer.pack(side=tk.BOTTOM)
+        # Footer Frame
+        footer_frame = ttk.Frame(frame)
+        footer_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        lbl_company = ttk.Label(footer_frame, text="CBVH", font=("Segoe UI", 8, "bold"), foreground="gray")
+        lbl_company.pack(side=tk.LEFT)
+        
+        lbl_author = ttk.Label(footer_frame, text="Made by Lim Dina", font=("Segoe UI", 8), foreground="gray")
+        lbl_author.pack(side=tk.RIGHT)
 
     def browse_file(self):
         filename = filedialog.askopenfilename(
@@ -78,6 +105,8 @@ class ConverterApp:
             
         self.btn_convert.config(state=tk.DISABLED)
         self.status_label.config(text="Converting... Please wait (this may take a few seconds).")
+        self.progress_var.set(0)
+        self.progress.pack(fill=tk.X, pady=(0, 10))
         self.root.update()
         
         # Run conversion in a separate thread so UI doesn't freeze
@@ -85,15 +114,30 @@ class ConverterApp:
         
     def run_conversion(self, input_path, output_path):
         try:
+            def update_progress(current, total):
+                percent = (current / total) * 100
+                self.root.after(0, self.progress_var.set, percent)
+                self.root.after(0, self.status_label.config, {'text': f"Extracting page {current} of {total}..."})
+
             # We call the exact same logic we built earlier!
-            extract_bank_statement(input_path, output_path)
-            self.root.after(0, self.conversion_success)
+            include_summary = self.include_summary_var.get()
+            success = extract_bank_statement(input_path, output_path, progress_callback=update_progress, include_summary=include_summary)
+            
+            if success:
+                self.root.after(0, lambda: self.conversion_success(output_path))
+            else:
+                self.root.after(0, lambda: self.conversion_error("No transactions found or extraction failed."))
         except Exception as e:
             self.root.after(0, lambda: self.conversion_error(str(e)))
+        finally:
+            self.root.after(0, self.progress.pack_forget)
             
-    def conversion_success(self):
+    def conversion_success(self, output_path):
         self.status_label.config(text="Done! Successfully converted.", foreground="green")
-        messagebox.showinfo("Success", "Your bank statement has been converted successfully!")
+        if messagebox.askyesno("Success", "Your bank statement has been converted successfully!\n\nDo you want to open the destination folder?"):
+            import subprocess
+            filepath = os.path.normpath(os.path.abspath(output_path))
+            subprocess.Popen(f'explorer /select,"{filepath}"')
         self.btn_convert.config(state=tk.NORMAL)
         
     def conversion_error(self, error_msg):
