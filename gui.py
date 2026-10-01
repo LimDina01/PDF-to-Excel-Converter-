@@ -158,6 +158,12 @@ class ConverterApp:
         self.btn_convert.config(state=tk.NORMAL)
 
 if __name__ == "__main__":
+    try:
+        import pyi_splash
+        pyi_splash.close()
+    except ImportError:
+        pass
+        
     root = tk.Tk()
     app = ConverterApp(root)
     root.mainloop()
