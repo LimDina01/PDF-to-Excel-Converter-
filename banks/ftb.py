@@ -135,7 +135,7 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
     if 'Cash In' in df.columns and 'Cash Out' in df.columns:
         df['Statement Amount'] = df['Cash In'].fillna(0) - df['Cash Out'].fillna(0)
 
-    df.to_csv(output_path, index=False, encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig', float_format='%.2f', lineterminator='\r\n')
     
     excel_path = output_path.replace('.csv', '.xlsx')
     with pd.ExcelWriter(excel_path, engine='openpyxl', datetime_format='DD MMM YYYY') as writer:

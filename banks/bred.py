@@ -126,7 +126,7 @@ def extract_bred_statement(pdf_path, output_path, progress_callback=None, includ
     if 'Credit' in df.columns and 'Debit' in df.columns:
         df['Statement Amount'] = df['Credit'].fillna(0) - df['Debit'].fillna(0)
 
-    df.to_csv(output_path, index=False, encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig', float_format='%.2f', lineterminator='\r\n')
     
     excel_path = output_path.replace('.csv', '.xlsx')
     with pd.ExcelWriter(excel_path, engine='openpyxl', datetime_format='DD-MM-YYYY') as writer:

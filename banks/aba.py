@@ -165,7 +165,7 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
 
     # Save to CSV
     print(f"Exporting data to: {output_path}")
-    df.to_csv(output_path, index=False, encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig', float_format='%.2f', lineterminator='\r\n')
     
     # Also save to Excel for convenience
     excel_path = output_path.replace('.csv', '.xlsx')

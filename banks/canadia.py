@@ -127,9 +127,7 @@ def extract_canadia_statement(pdf_path, output_path, progress_callback=None, inc
         df['Date'] = df['Date'].str.replace(r' \d{2}:\d{2} (AM|PM)', '', regex=True)
         df['Date'] = pd.to_datetime(df['Date'], format='%d %b %Y', errors='coerce')
 
-    if 'Trans. Ref' in df.columns:
-        # Force Excel to treat the long numerical string as text instead of scientific notation
-        df['Trans. Ref'] = df['Trans. Ref'].apply(lambda x: f'="{x}"' if pd.notnull(x) and x != '' else x)
+
 
     for col in ['Credit', 'Debit', 'Balance']:
         if col in df.columns:
@@ -139,7 +137,7 @@ def extract_canadia_statement(pdf_path, output_path, progress_callback=None, inc
     if 'Credit' in df.columns and 'Debit' in df.columns:
         df['Statement Amount'] = df['Credit'].fillna(0) - df['Debit'].fillna(0)
 
-    df.to_csv(output_path, index=False, encoding='utf-8-sig')
+    df.to_csv(output_path, index=False, encoding='utf-8-sig', float_format='%.2f', lineterminator='\r\n')
     
     excel_path = output_path.replace('.csv', '.xlsx')
     with pd.ExcelWriter(excel_path, engine='openpyxl', datetime_format='DD MMM YYYY') as writer:
