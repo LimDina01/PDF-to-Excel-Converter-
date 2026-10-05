@@ -143,7 +143,7 @@ AUTHENTICATION_BACKENDS = (
 # 2. LDAP Server settings (Update these with your real AD details)
 import ssl
 LDAP_AUTH_URL = "ldaps://192.168.11.120:636"
-LDAP_AUTH_USE_TLS = False  # Set to False because we are using native LDAPS on port 636, not StartTLS
+LDAP_AUTH_USE_TLS = True  # Must be True so TLS_ARGS are used to bypass cert validation
 LDAP_AUTH_TLS_ARGS = {"validate": ssl.CERT_NONE}
 
 # 3. Active Directory Search Base (e.g. ou=Users,dc=yourdomain,dc=com)
