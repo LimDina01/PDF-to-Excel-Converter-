@@ -4,16 +4,18 @@ def custom_sync_user_relations(user, ldap_attributes, **kwargs):
     We use it to strictly enforce that only members of the pdf_convertor group
     can access the application.
     """
-    # Active Directory returns 'memberOf' as a list of group strings
+    import json
+    # Log the attributes to see what we actually received from AD!
+    with open("ldap_debug_log.txt", "w") as f:
+        f.write(json.dumps({k: str(v) for k, v in ldap_attributes.items()}, indent=4))
+        
     ad_groups = ldap_attributes.get("memberOf", [])
     
     # Target group that is allowed to use this app
     TARGET_GROUP = "CN=pdf_convertor,OU=2.Authentication,OU=Other,DC=cbvh66,DC=com"
     
-    # Flag to determine if they are authorized
     is_authorized = False
     
-    # Loop through their AD groups to see if they are in the target group
     for group in ad_groups:
         if TARGET_GROUP in group:
             is_authorized = True
@@ -23,7 +25,6 @@ def custom_sync_user_relations(user, ldap_attributes, **kwargs):
     # If they are not in the group, their account is instantly deactivated, rejecting their login.
     user.is_active = is_authorized
     
-    # We will not make them an admin by default, just a standard active user
     user.is_staff = False
     user.is_superuser = False
     
