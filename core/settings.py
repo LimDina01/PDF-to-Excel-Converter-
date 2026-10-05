@@ -164,7 +164,7 @@ LDAP_AUTH_FORMAT_USERNAME = "django_python3_ldap.utils.format_username_active_di
 LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = "cbvh66"
 
 # 6. Service Account for initial bind (if your AD doesn't allow anonymous binding)
-LDAP_AUTH_CONNECTION_USERNAME = "cbvh66\\pdf_convertor_svc"
+LDAP_AUTH_CONNECTION_USERNAME = "pdf_convertor_svc@cbvh66.com"
 LDAP_AUTH_CONNECTION_PASSWORD = "$Cbvh@168"
 
 LOGIN_REDIRECT_URL = '/'
