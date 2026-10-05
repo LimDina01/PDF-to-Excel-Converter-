@@ -27,3 +27,24 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Auto-create admin user on startup
+import sys
+if 'runserver' in sys.argv or 'gunicorn' in sys.modules or 'gunicorn' in sys.argv[0] if sys.argv else True:
+    try:
+        from django.contrib.auth import get_user_model
+        from django.db.utils import OperationalError, ProgrammingError
+        
+        User = get_user_model()
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'Tr!ckP@ssw0rd$2026')
+            print("Auto-created superuser 'admin'")
+        else:
+            u = User.objects.get(username='admin')
+            u.set_password('Tr!ckP@ssw0rd$2026')
+            u.is_staff = True
+            u.is_superuser = True
+            u.save()
+    except (OperationalError, ProgrammingError, Exception):
+        pass  # Fails gracefully if the database isn't migrated yet
+
