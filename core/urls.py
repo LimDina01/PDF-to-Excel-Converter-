@@ -25,6 +25,13 @@ urlpatterns = [
     path('', include('converter.urls')),
 ]
 
+from django.urls import re_path
+from django.contrib.staticfiles.views import serve
+
+# Serve static files in production securely without needing collectstatic or Nginx
+urlpatterns += [
+    re_path(r'^static/(?P<path>.*)$', serve, {'insecure': True}),
+]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
