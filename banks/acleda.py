@@ -1,6 +1,7 @@
 import pdfplumber
 import pandas as pd
 import re
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 def extract_acleda_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
     print(f"Reading ACLEDA PDF: {pdf_path}")
@@ -45,7 +46,7 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
                 is_new_row = False
                 if len(line) >= 3:
                     date_str = f"{line[0]['text']} {line[1]['text']} {line[2]['text']}"
-                    if re.match(r'^[A-Z][a-z]{2} \d{2}, \d{4}$', date_str):
+                    if re.match(r'^[A-Z][a-z]{2} \d{1,2}, \d{4}$', date_str):
                         is_new_row = True
                         
                 if is_new_row:
@@ -91,19 +92,22 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
         rows.append(current_row)
     
     if not rows:
-        print("No transactions found in the PDF.")
-        return False
-
-    df = pd.DataFrame(rows)
-    for col in df.columns:
-        df[col] = df[col].str.strip()
+        print("No transactions found in the PDF. Generating empty statement.")
+        df = pd.DataFrame(columns=['DATE', 'DESCRIPTIONS', 'CASH OUT (Dr)', 'CASH IN (Cr)', 'BALANCE'])
+    else:
+        df = pd.DataFrame(rows)
         
-    if 'DATE' in df.columns:
+    for col in df.columns:
+        df[col] = df[col].astype(str).str.strip()
+        # Remove illegal XML characters to prevent openpyxl crashes
+        df[col] = df[col].apply(lambda val: ILLEGAL_CHARACTERS_RE.sub('', val) if isinstance(val, str) else val)
+        
+    if 'DATE' in df.columns and not df.empty:
         df['DATE'] = pd.to_datetime(df['DATE'], format='%b %d, %Y', errors='coerce')
 
     for col in ['CASH OUT (Dr)', 'CASH IN (Cr)', 'BALANCE']:
         if col in df.columns:
-            df[col] = df[col].replace('USD', '', regex=True).replace('', '0.00').replace(',', '', regex=True)
+            df[col] = df[col].astype(str).str.replace(r'[^\d.-]', '', regex=True)
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
     if 'CASH IN (Cr)' in df.columns and 'CASH OUT (Dr)' in df.columns:

@@ -1,48 +1,108 @@
-# ABA Bank Statement to CSV/Excel Converter
-**Made by Lim Dina**
+# Ubuntu Server Deployment Guide
 
-This tool extracts transaction data from ABA Bank Statement PDFs and converts them into a clean, uniform CSV/Excel format.
+This guide covers everything your IT administrator needs to deploy the Bank Statement Converter application to a production Ubuntu Server.
 
-## How to use the App:
-You don't need Python installed to use the app. Just double-click the `.exe` file to open the Graphical User Interface (GUI).
-1. Click **Browse PDF** and select your bank statement.
-2. Click **Convert to Excel / CSV** and select where you want to save the output.
-3. Wait a few seconds for the success message!
+## 1. Prepare the Server
+Update the server and install the required system packages, including Python 3, Nginx (web server), and Supervisor (process manager).
 
----
-
-## How to Edit and Update the Code (For Developers):
-If you want to adjust the extraction logic (e.g., if a number gets too wide or you want to add support for a different bank), it is very easy to update the application!
-
-### 1. Edit the Logic
-Open `convert_statement.py` in your code editor. 
-Around **Line 82**, you will find the `x` coordinates (the invisible vertical fences) that tell the scanner which column to put the text in:
-```python
-if x < 70:
-    current_row['VALUE DATE'] += text + ' '
-elif x < 160:
-    current_row['TRANSACTION TYPE'] += text + ' '
-elif x < 385:
-    current_row['TRANSACTION DETAILS'] += text + ' '
-# ... edit these numbers to shift the columns ...
-```
-Save the file once you are done making changes. (You do **not** need to touch `gui.py`!)
-
-### 2. Test your changes (Optional)
-To test if your new logic works before building the `.exe`, open your terminal, activate your virtual environment, and run the script:
-```powershell
-.\venv\Scripts\activate
-python convert_statement.py
+```bash
+sudo apt update
+sudo apt install -y python3 python3-pip python3-venv python3-dev nginx supervisor
 ```
 
-### 3. Re-compile the `.exe` (Update the App)
-Once you are happy with the changes, you must package it back into the standalone `.exe` file so other users can run it without Python.
-Run this command in your terminal:
-```powershell
-.\venv\Scripts\activate
-pyinstaller --clean --onefile --windowed --name "ABA_GUI_App" gui.py
+## 2. Transfer the Code
+Copy the entire `web-converter` project folder to the server. The standard location for web applications is `/var/www/`.
+
+```bash
+# Example showing ownership setup
+sudo cp -r /path/to/your/web-converter /var/www/web-converter
+sudo chown -R $USER:$USER /var/www/web-converter
+cd /var/www/web-converter
 ```
 
-*(Note: If you are using Python 3.14 alpha and get a `base_library.zip` error, simply create an empty folder named `build/ABA_GUI_App/` before running the command!)*
+## 3. Set up the Python Environment
+Create an isolated virtual environment and install all required dependencies (Django, Pandas, PDF tools, LDAP, and Gunicorn).
 
-Once the compiler finishes, your brand new updated `.exe` will be sitting inside the `dist/` folder! Just drag it out into your main folder, delete `build/` and `dist/`, and you are done!
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+pip install gunicorn
+```
+
+## 4. Configure Django for Production
+Before starting the server, you need to adjust a few Django settings:
+
+1. Open `core/settings.py`.
+2. Change `DEBUG = True` to `DEBUG = False`.
+3. Update `ALLOWED_HOSTS = []` to include your server's IP or Domain Name (e.g., `ALLOWED_HOSTS = ['192.168.1.100', 'converter.yourdomain.local']`).
+4. **Enable LDAP:** Scroll to the bottom and uncomment line 140: `"django_python3_ldap.auth.LDAPBackend"`.
+5. Run the production prep commands:
+
+```bash
+# Create the database tables
+python manage.py migrate
+
+# Collect all CSS/JS files into the staticfiles folder
+python manage.py collectstatic --noinput
+```
+
+## 5. Configure Supervisor (Gunicorn)
+We use Supervisor to ensure Gunicorn (the Python app server) runs automatically on startup and restarts if it crashes.
+
+1. Create a configuration file: `sudo nano /etc/supervisor/conf.d/web-converter.conf`
+2. Paste the following (adjust paths if you put the folder elsewhere):
+
+```ini
+[program:web-converter]
+command=/var/www/web-converter/venv/bin/gunicorn core.wsgi:application --bind 127.0.0.1:8000 --workers 3
+directory=/var/www/web-converter
+user=www-data
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/web-converter.err.log
+stdout_logfile=/var/log/web-converter.out.log
+```
+
+3. Start the Supervisor task:
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start web-converter
+```
+
+## 6. Configure Nginx (Web Server)
+Nginx will accept traffic on Port 80 and forward it to Gunicorn. It will also serve your static CSS/JS files quickly.
+
+1. Create a new Nginx config: `sudo nano /etc/nginx/sites-available/web-converter`
+2. Paste the following configuration (replace `YOUR_SERVER_IP`):
+
+```nginx
+server {
+    listen 80;
+    server_name YOUR_SERVER_IP; # e.g. 192.168.1.100 or a local domain
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    
+    # Serve CSS and JS
+    location /static/ {
+        root /var/www/web-converter;
+    }
+
+    # Serve the main app by proxying to Gunicorn
+    location / {
+        include proxy_params;
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+```
+
+3. Enable the configuration and restart Nginx:
+```bash
+sudo ln -s /etc/nginx/sites-available/web-converter /etc/nginx/sites-enabled
+sudo rm /etc/nginx/sites-enabled/default
+sudo systemctl restart nginx
+```
+
+## 7. You're Done!
+Open your web browser and navigate to the Ubuntu Server's IP address. You should see the sleek Active Directory login page!

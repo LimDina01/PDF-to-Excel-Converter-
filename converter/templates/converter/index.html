@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Statement Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark Theme (Default) */
+            --bg-color: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-color: #f8fafc;
+            --label-color: #cbd5e1;
+            --input-bg: rgba(15, 23, 42, 0.5);
+            --option-bg: #1e293b;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --file-btn-bg: rgba(255, 255, 255, 0.1);
+            --file-btn-hover: rgba(255, 255, 255, 0.2);
+            --bg-grad-1: #1e3a8a;
+            --bg-grad-2: #312e81;
+        }
+        
+        body.light-theme {
+            /* Light Theme */
+            --bg-color: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-color: #0f172a;
+            --label-color: #334155;
+            --input-bg: rgba(255, 255, 255, 0.6);
+            --option-bg: #ffffff;
+            --file-btn-bg: rgba(0, 0, 0, 0.05);
+            --file-btn-hover: rgba(0, 0, 0, 0.1);
+            --bg-grad-1: #dbeafe;
+            --bg-grad-2: #e0e7ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at top right, var(--bg-grad-1) 0%, transparent 40%),
+                              radial-gradient(circle at bottom left, var(--bg-grad-2) 0%, transparent 40%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* Theme Toggle Button */
+        #theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10;
+        }
+        #theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+            box-sizing: border-box;
+            margin: 1rem;
+            transition: background 0.5s ease, border-color 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            margin-top: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--label-color);
+            transition: color 0.3s ease;
+        }
+
+        /* Custom Select Styles */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+        
+        .custom-select {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .custom-select__trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .custom-select.open .custom-select__trigger {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        
+        .arrow {
+            position: relative;
+            height: 10px;
+            width: 10px;
+        }
+        
+        .arrow::before, .arrow::after {
+            content: "";
+            position: absolute;
+            bottom: 0px;
+            width: 0.15rem;
+            height: 100%;
+            transition: all 0.5s;
+            background: var(--label-color);
+        }
+        
+        .arrow::before {
+            left: -4px;
+            transform: rotate(45deg);
+        }
+        
+        .arrow::after {
+            left: 2px;
+            transform: rotate(-45deg);
+        }
+        
+        .open .arrow::before {
+            transform: rotate(-45deg);
+        }
+        
+        .open .arrow::after {
+            transform: rotate(45deg);
+        }
+        
+        .custom-options {
+            position: absolute;
+            display: block;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid var(--accent);
+            border-top: 0;
+            background: var(--option-bg);
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: 2;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .custom-select.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        
+        .custom-option {
+            position: relative;
+            display: block;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-option:hover {
+            cursor: pointer;
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .custom-option.selected {
+            color: white;
+            background-color: var(--accent-hover);
+        }
+
+        input[type="file"] {
+            padding: 0.75rem;
+            border-radius: 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-color);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        input[type="file"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        input[type="file"]::file-selector-button {
+            background: var(--file-btn-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-right: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--file-btn-hover);
+        }
+
+        button[type="submit"] {
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--accent);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 0.5rem;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .radio-group label, .checkbox-group label {
+            color: var(--text-color);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle" aria-label="Toggle Theme">☀️</button>
+
+    <div class="container">
+        <h1>Bank Statement Converter</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Select Bank</label>
+                <div class="custom-select-wrapper">
+                    <div class="custom-select">
+                        <div class="custom-select__trigger">
+                            <span id="bank_display">Auto-Detect</span>
+                            <div class="arrow"></div>
+                        </div>
+                        <div class="custom-options">
+                            <span class="custom-option selected" data-value="Auto-Detect">Auto-Detect</span>
+                            <span class="custom-option" data-value="ABA">ABA Bank</span>
+                            <span class="custom-option" data-value="BRED">BRED Bank</span>
+                            <span class="custom-option" data-value="ACLEDA">ACLEDA Bank</span>
+                            <span class="custom-option" data-value="FTB">FTB Bank</span>
+                            <span class="custom-option" data-value="CANADIA">Canadia Bank</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="bank" id="bank_input" value="Auto-Detect">
+            </div>
+            
+            <div class="form-group">
+                <label for="pdf_file">Upload PDF Statement</label>
+                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" required>
+            </div>
+            
+            <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.75rem;">
+                <input type="checkbox" name="include_summary" id="include_summary" style="width: 1.2rem; height: 1.2rem; cursor: pointer;">
+                <label for="include_summary" style="font-size: 0.95rem; margin: 0;">Include Summary (if supported)</label>
+            </div>
+            
+            <div class="form-group radio-group">
+                <label>Export Format</label>
+                <div style="display: flex; gap: 1.5rem; padding: 0.5rem 0;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="export_format" value="csv" checked style="width: 1.1rem; height: 1.1rem; cursor: pointer;"> CSV
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="export_format" value="excel" style="width: 1.1rem; height: 1.1rem; cursor: pointer;"> Excel (.xlsx)
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit">Convert File</button>
+        </form>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        
+        // Load preference
+        if (localStorage.getItem('theme') === 'light') {
+            body.classList.add('light-theme');
+            themeToggle.textContent = '🌙';
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            if (body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '🌙';
+            } else {
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '☀️';
+            }
+        });
+        // Custom Select Logic
+        const customSelect = document.querySelector('.custom-select');
+        const customOptions = document.querySelectorAll('.custom-option');
+        const bankInput = document.getElementById('bank_input');
+        const bankDisplay = document.getElementById('bank_display');
+        
+        customSelect.addEventListener('click', function() {
+            this.classList.toggle('open');
+        });
+        
+        for (const option of customOptions) {
+            option.addEventListener('click', function() {
+                if (!this.classList.contains('selected')) {
+                    const selected = this.parentNode.querySelector('.custom-option.selected');
+                    if (selected) {
+                        selected.classList.remove('selected');
+                    }
+                    this.classList.add('selected');
+                    bankDisplay.textContent = this.textContent;
+                    bankInput.value = this.getAttribute('data-value');
+                }
+            });
+        }
+        
+        window.addEventListener('click', function(e) {
+            if (!customSelect.contains(e.target)) {
+                customSelect.classList.remove('open');
+            }
+        });
+
+        // Ensure the file input is cleared on page load/refresh
+        window.addEventListener('pageshow', function() {
+            document.getElementById('pdf_file').value = '';
+        });
+    </script>
+</body>
+</html>

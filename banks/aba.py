@@ -1,6 +1,7 @@
 import pdfplumber
 import pandas as pd
 import re
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 def extract_aba_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
     print(f"Reading ABA PDF: {pdf_path}")
@@ -48,30 +49,36 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                 # Reconstruct the line text for regex checking
                 line_text = " ".join([w['text'] for w in line])
                 
-                # Check if this line is a footer or disclaimer to skip
-                if 'Generated on:' in line_text or 'DISCLAIMER:' in line_text or 'Page ' in line_text or 'Advanced Bank of Asia' in line_text or 'ACCOUNT STATEMENT' in line_text:
+                # Check if this line is a footer, watermark, or disclaimer to skip
+                if any(skip_word in line_text for skip_word in [
+                    'Generated on:', 'DISCLAIMER:', 'Page ', 'Advanced Bank of Asia', 
+                    'ACCOUNT STATEMENT', 'ACCOUNT ACTIVITY', 'reliance', 'document is free', 
+                    'The authenticity verification', 'verify.ababank.com', 'contact ABA Bank directly'
+                ]):
                     continue
                     
                 # Skip table headers so they don't get accidentally glued to the previous row
-                if 'TRANSACTION TYPE' in line_text and 'TRANSACTION DETAILS' in line_text:
+                if 'TRANSACTION TYPE' in line_text or ('Date' in line_text and 'Transaction Details' in line_text):
                     seen_table_headers = True
                     continue
                 
-                # Check if it's the start of a new transaction (starts with Date: DD Mmm YYYY)
-                # First two words should be 'DD' and 'Mmm'
+                # Check if it's the start of a new transaction (starts with Date)
                 is_new_row = False
                 if len(line) >= 3:
-                    date_str = f"{line[0]['text']} {line[1]['text']} {line[2]['text']}"
-                    if re.match(r'^\d{2} [A-Z][a-z]{2} \d{4}$', date_str):
-                        is_new_row = True
-                        has_started_transactions = True
+                    # The date must actually be in the Date column (x0 < 90) to be a new row!
+                    if line[0]['x0'] < 90:
+                        date_str = f"{line[0]['text']} {line[1]['text']} {line[2]['text']}"
+                        # Match old format "01 Sep 2026" or new format "Sep 01, 2026"
+                        if re.match(r'^\d{2} [A-Z][a-z]{2} \d{4}$', date_str) or re.match(r'^[A-Z][a-z]{2} \d{2}, \d{4}$', date_str):
+                            is_new_row = True
+                            has_started_transactions = True
                 
                 is_summary_row = False
                 if include_summary:
                     if line_text.startswith("Opening Balance") and "Total" not in line_text and seen_table_headers:
                         is_summary_row = True
                     elif has_started_transactions:
-                        if line_text.startswith("Closing Balance") or line_text.startswith("Total Blocked Amounts") or line_text.startswith("Blocked Amounts"):
+                        if line_text.startswith("Closing Balance") or line_text.startswith("Ending Balance") or line_text.startswith("Total Money In") or line_text.startswith("Total Money Out") or line_text.startswith("Credit Balance") or line_text.startswith("Total Blocked Amounts") or line_text.startswith("Blocked Amounts"):
                             is_summary_row = True
                         elif line_text.startswith("Balance ") or line_text == "Balance":
                             is_summary_row = True
@@ -82,7 +89,6 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                         
                     current_row = {
                         'VALUE DATE': '',
-                        'TRANSACTION TYPE': '',
                         'TRANSACTION DETAILS': '',
                         'MONEY IN': '',
                         'MONEY OUT': '',
@@ -103,45 +109,51 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                                 else:
                                     current_row['TRANSACTION DETAILS'] += text + ' '
                     else:
-                        # Assign words to columns based on x0 coordinate
+                        # Assign words to columns based on x1 coordinate for amounts, x0 for date
                         for w in line:
-                            x = w['x0']
+                            x0 = w['x0']
+                            x1 = w['x1']
                             text = w['text']
                             
-                            if x < 70:
+                            if x0 < 90:
                                 current_row['VALUE DATE'] += text + ' '
-                            elif x < 160:
-                                current_row['TRANSACTION TYPE'] += text + ' '
-                            elif x < 385:
+                            elif x1 < 290:
                                 current_row['TRANSACTION DETAILS'] += text + ' '
-                            elif x < 455:
+                            elif x1 < 390:
                                 current_row['MONEY IN'] += text + ' '
-                            elif x < 550:
+                            elif x1 < 480:
                                 current_row['MONEY OUT'] += text + ' '
                             else:
                                 current_row['BALANCE'] += text + ' '
                 else:
                     # It's a continuation line. 
-                    # Usually, this is just TRANSACTION DETAILS continuing.
                     if current_row:
                         for w in line:
-                            x = w['x0']
+                            x0 = w['x0']
+                            x1 = w['x1']
                             text = w['text']
                             
-                            # Append to details if it's in the details or type area
-                            if 70 <= x < 385:
+                            if x0 < 90:
+                                current_row['VALUE DATE'] += text + ' '
+                            elif x1 < 290:
                                 current_row['TRANSACTION DETAILS'] += text + ' '
+                            elif x1 < 390:
+                                current_row['MONEY IN'] += text + ' '
+                            elif x1 < 480:
+                                current_row['MONEY OUT'] += text + ' '
+                            else:
+                                current_row['BALANCE'] += text + ' '
                             
     # Append the last row
     if current_row:
         rows.append(current_row)
     
     if not rows:
-        print("No transactions found in the PDF. Please check the PDF format.")
-        return False
-
-    # Convert to DataFrame
-    df = pd.DataFrame(rows)
+        print("No transactions found in the PDF. Generating empty statement.")
+        df = pd.DataFrame(columns=['VALUE DATE', 'TRANSACTION DETAILS', 'MONEY IN', 'MONEY OUT', 'BALANCE'])
+    else:
+        # Convert to DataFrame
+        df = pd.DataFrame(rows)
     
     # Clean up trailing spaces
     for col in df.columns:
@@ -149,12 +161,14 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
         
     # Convert 'VALUE DATE' to actual datetime objects so Excel recognizes them as dates
     if 'VALUE DATE' in df.columns:
-        df['VALUE DATE'] = pd.to_datetime(df['VALUE DATE'], format='%d %b %Y', errors='coerce')
+        df['VALUE DATE'] = pd.to_datetime(df['VALUE DATE'], errors='coerce')
 
-    # Clean up currency columns (remove commas, handle empty strings)
+    # Clean up currency columns (remove commas, USD, KHR, handle empty strings)
     for col in ['MONEY IN', 'MONEY OUT', 'BALANCE']:
         if col in df.columns:
-            df[col] = df[col].replace('', '0.00').replace(',', '', regex=True)
+            # Keep only digits, minus signs, and decimal points
+            df[col] = df[col].astype(str).str.replace(r'[^\d.-]', '', regex=True)
+            df[col] = df[col].replace('', '0.00')
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
     # Add 'Statement Amount' column (Money In - Money Out)
@@ -162,6 +176,15 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
         money_in = df['MONEY IN'].fillna(0)
         money_out = df['MONEY OUT'].fillna(0)
         df['Statement Amount'] = money_in - money_out
+
+    # Strip illegal characters that crash Excel (openpyxl)
+    def clean_illegal_chars(val):
+        if not isinstance(val, str):
+            return val
+        return ILLEGAL_CHARACTERS_RE.sub('', val)
+
+    for col in df.columns:
+        df[col] = df[col].apply(clean_illegal_chars)
 
     # Save to CSV
     print(f"Exporting data to: {output_path}")

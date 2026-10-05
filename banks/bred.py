@@ -1,6 +1,7 @@
 import pdfplumber
 import pandas as pd
 import re
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 
 def extract_bred_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
     print(f"Reading BRED PDF: {pdf_path}")
@@ -107,12 +108,14 @@ def extract_bred_statement(pdf_path, output_path, progress_callback=None, includ
         rows.append(current_row)
     
     if not rows:
-        print("No transactions found in the PDF.")
-        return False
-
-    df = pd.DataFrame(rows)
+        print("No transactions found in the PDF. Generating empty statement.")
+        df = pd.DataFrame(columns=['Txn Date', 'Value Date', 'Transaction Description', 'Debit', 'Credit', 'Balance'])
+    else:
+        df = pd.DataFrame(rows)
+        
     for col in df.columns:
-        df[col] = df[col].str.strip()
+        df[col] = df[col].astype(str).str.strip()
+        df[col] = df[col].apply(lambda val: ILLEGAL_CHARACTERS_RE.sub('', val) if isinstance(val, str) else val)
         
     for date_col in ['Txn Date', 'Value Date']:
         if date_col in df.columns:
@@ -120,7 +123,7 @@ def extract_bred_statement(pdf_path, output_path, progress_callback=None, includ
 
     for col in ['Debit', 'Credit', 'Balance']:
         if col in df.columns:
-            df[col] = df[col].replace('', '0.00').replace(',', '', regex=True)
+            df[col] = df[col].astype(str).str.replace(r'[^\d.-]', '', regex=True)
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
     if 'Credit' in df.columns and 'Debit' in df.columns:
