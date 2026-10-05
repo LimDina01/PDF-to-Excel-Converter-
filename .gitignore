@@ -9,7 +9,6 @@ env/
 # Django
 db.sqlite3
 media/
-staticfiles/
 
 # Application Specific
 Test/
