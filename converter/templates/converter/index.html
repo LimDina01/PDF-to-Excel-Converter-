@@ -4,110 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Statement Converter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) */
-            --bg-color: #0f172a;
-            --glass-bg: rgba(30, 41, 59, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-color: #f8fafc;
-            --label-color: #cbd5e1;
-            --input-bg: rgba(15, 23, 42, 0.5);
-            --option-bg: #1e293b;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --file-btn-bg: rgba(255, 255, 255, 0.1);
-            --file-btn-hover: rgba(255, 255, 255, 0.2);
-            --bg-grad-1: #1e3a8a;
-            --bg-grad-2: #312e81;
-        }
-        
-        body.light-theme {
-            /* Light Theme */
-            --bg-color: #f8fafc;
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(0, 0, 0, 0.1);
-            --text-color: #0f172a;
-            --label-color: #334155;
-            --input-bg: rgba(255, 255, 255, 0.6);
-            --option-bg: #ffffff;
-            --file-btn-bg: rgba(0, 0, 0, 0.05);
-            --file-btn-hover: rgba(0, 0, 0, 0.1);
-            --bg-grad-1: #dbeafe;
-            --bg-grad-2: #e0e7ff;
+            --bg-color: #eef0f3;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --input-border: #cccccc;
+            --input-bg: #ffffff;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --label-color: #4a5568;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Open Sans', sans-serif;
             background: var(--bg-color);
-            background-image: radial-gradient(circle at top right, var(--bg-grad-1) 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, var(--bg-grad-2) 0%, transparent 40%);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: background 0.5s ease, color 0.5s ease;
         }
 
-        /* Theme Toggle Button */
-        #theme-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            font-size: 1.25rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-color);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 10;
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
         }
-        #theme-toggle:hover {
-            transform: scale(1.05);
+        
+        .header img {
+            max-height: 120px;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #4a5568;
         }
 
         .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 3rem;
+            background: var(--card-bg);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 4px;
+            padding: 2.5rem 3rem;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.8s ease-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
-            margin: 1rem;
-            transition: background 0.5s ease, border-color 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             margin-bottom: 2rem;
         }
 
@@ -124,10 +74,9 @@
         }
 
         label {
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.95rem;
+            font-weight: 600;
             color: var(--label-color);
-            transition: color 0.3s ease;
         }
 
         /* Custom Select Styles */
@@ -149,16 +98,16 @@
             align-items: center;
             justify-content: space-between;
             padding: 0.75rem 1rem;
-            border-radius: 12px;
+            border-radius: 4px;
             background: var(--input-bg);
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--input-border);
             color: var(--text-color);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         
         .custom-select.open .custom-select__trigger {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
         }
@@ -175,8 +124,8 @@
             bottom: 0px;
             width: 0.15rem;
             height: 100%;
-            transition: all 0.5s;
-            background: var(--label-color);
+            transition: all 0.3s;
+            background: var(--text-muted);
         }
         
         .arrow::before {
@@ -203,18 +152,18 @@
             top: 100%;
             left: 0;
             right: 0;
-            border: 1px solid var(--accent);
+            border: 1px solid var(--input-border);
             border-top: 0;
-            background: var(--option-bg);
-            transition: all 0.3s;
+            background: var(--card-bg);
+            transition: all 0.2s;
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
             z-index: 2;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
         .custom-select.open .custom-options {
@@ -229,7 +178,6 @@
             display: block;
             padding: 0.75rem 1rem;
             font-size: 0.95rem;
-            font-weight: 400;
             color: var(--text-color);
             cursor: pointer;
             transition: all 0.2s ease;
@@ -237,109 +185,123 @@
         
         .custom-option:hover {
             cursor: pointer;
-            background-color: var(--accent);
-            color: white;
+            background-color: #f1f3f5;
         }
         
         .custom-option.selected {
             color: white;
-            background-color: var(--accent-hover);
+            background-color: var(--accent);
         }
 
         input[type="file"] {
             padding: 0.75rem;
-            border-radius: 12px;
+            border-radius: 4px;
             background: var(--input-bg);
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--input-border);
             color: var(--text-color);
             font-family: inherit;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
         input[type="file"]:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
 
         input[type="file"]::file-selector-button {
-            background: var(--file-btn-bg);
-            border: none;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
             color: var(--text-color);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
             margin-right: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s;
+            font-family: inherit;
         }
 
         input[type="file"]::file-selector-button:hover {
-            background: var(--file-btn-hover);
+            background: #dde2e6;
         }
 
         button[type="submit"] {
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 0.85rem;
+            border-radius: 4px;
             background: var(--accent);
             color: white;
             font-weight: 600;
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+            width: 100%;
             margin-top: 0.5rem;
         }
 
         button[type="submit"]:hover {
             background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
         }
 
         .error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
             padding: 1rem;
-            border-radius: 12px;
+            border-radius: 4px;
             text-align: center;
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
-            font-weight: 500;
         }
         
         .radio-group label, .checkbox-group label {
             color: var(--text-color);
             cursor: pointer;
+            font-weight: 400;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: white;
+            border: 1px solid #cccccc;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            color: #333333;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .logout-btn:hover {
+            background: #f8f9fa;
+            border-color: #b3b3b3;
         }
     </style>
 </head>
 <body>
-    <form action="{% url 'logout' %}" method="post" style="position: absolute; top: 1.5rem; left: 1.5rem; margin: 0; z-index: 10;">
+    <form action="{% url 'logout' %}" method="post" style="margin: 0;">
         {% csrf_token %}
-        <button type="submit" id="logout-btn" style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 12px; color: var(--text-color); cursor: pointer; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); font-weight: 600; font-size: 0.95rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <button type="submit" class="logout-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             Log Out
         </button>
     </form>
-    <style>
-        #logout-btn:hover {
-            transform: translateY(-2px);
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-    </style>
 
-    <button id="theme-toggle" aria-label="Toggle Theme">☀️</button>
+    <div class="header">
+        {% load static %}
+        <img src="{% static 'converter/img/logo.png' %}" alt="Logo">
+        <h1>Bank Statement Converter</h1>
+    </div>
 
     <div class="container">
-        <h1>Bank Statement Converter</h1>
         {% if messages %}
             {% for message in messages %}
                 <div class="error">{{ message }}</div>
@@ -374,8 +336,8 @@
             </div>
             
             <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.75rem;">
-                <input type="checkbox" name="include_summary" id="include_summary" style="width: 1.2rem; height: 1.2rem; cursor: pointer;">
-                <label for="include_summary" style="font-size: 0.95rem; margin: 0;">Include Summary (if supported)</label>
+                <input type="checkbox" name="include_summary" id="include_summary" style="width: 1.1rem; height: 1.1rem; cursor: pointer;">
+                <label for="include_summary" style="margin: 0;">Include Summary (if supported)</label>
             </div>
             
             <div class="form-group radio-group">
@@ -395,25 +357,6 @@
     </div>
 
     <script>
-        const themeToggle = document.getElementById('theme-toggle');
-        const body = document.body;
-        
-        // Load preference
-        if (localStorage.getItem('theme') === 'light') {
-            body.classList.add('light-theme');
-            themeToggle.textContent = '🌙';
-        }
-        
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            if (body.classList.contains('light-theme')) {
-                localStorage.setItem('theme', 'light');
-                themeToggle.textContent = '🌙';
-            } else {
-                localStorage.setItem('theme', 'dark');
-                themeToggle.textContent = '☀️';
-            }
-        });
         // Custom Select Logic
         const customSelect = document.querySelector('.custom-select');
         const customOptions = document.querySelectorAll('.custom-option');

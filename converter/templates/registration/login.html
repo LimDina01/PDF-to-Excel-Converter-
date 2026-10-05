@@ -4,149 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Bank Statement Converter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) */
-            --bg-color: #0f172a;
-            --glass-bg: rgba(30, 41, 59, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-color: #f8fafc;
-            --label-color: #cbd5e1;
-            --input-bg: rgba(15, 23, 42, 0.5);
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --bg-grad-1: #1e3a8a;
-            --bg-grad-2: #312e81;
+            --bg-color: #eef0f3;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --input-border: #cccccc;
+            --input-bg: #ffffff;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
         }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Open Sans', sans-serif;
             background: var(--bg-color);
-            background-image: radial-gradient(circle at top right, var(--bg-grad-1) 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, var(--bg-grad-2) 0%, transparent 40%);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        .container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 3rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.8s ease-out;
-            box-sizing: border-box;
-            margin: 1rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 {
-            margin-top: 0;
-            font-size: 1.8rem;
-            font-weight: 700;
+        .header {
             text-align: center;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
         }
         
+        .header img {
+            max-height: 120px;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .container {
+            background: var(--card-bg);
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 4px;
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            margin-bottom: 1.5rem;
+        }
+
         p.subtitle {
             text-align: center;
-            color: var(--label-color);
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
             margin-top: 0;
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
-        .form-group {
+        .input-group {
+            position: relative;
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            align-items: center;
         }
 
-        label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--label-color);
+        .input-group svg {
+            position: absolute;
+            right: 12px;
+            color: var(--text-muted);
+            width: 16px;
+            height: 16px;
         }
 
         input[type="text"], input[type="password"] {
-            padding: 0.75rem;
-            border-radius: 12px;
+            width: 100%;
+            padding: 0.85rem 2.5rem 0.85rem 1rem;
+            border-radius: 4px;
             background: var(--input-bg);
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--input-border);
             color: var(--text-color);
             font-family: inherit;
+            font-size: 1rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
         }
 
         input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
 
         button[type="submit"] {
-            padding: 1rem;
-            border-radius: 12px;
+            padding: 0.85rem;
+            border-radius: 4px;
             background: var(--accent);
             color: white;
             font-weight: 600;
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s ease;
+            width: 100%;
             margin-top: 0.5rem;
         }
 
         button[type="submit"]:hover {
             background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        button[type="submit"]:active {
-            transform: translateY(0);
         }
 
         .error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #ef4444;
-            padding: 1rem;
-            border-radius: 12px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 0.75rem;
+            border-radius: 4px;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             font-size: 0.9rem;
-            font-weight: 500;
+        }
+        
+        .version {
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        {% load static %}
+        <img src="{% static 'converter/img/logo.png' %}" alt="Logo">
+        <h1>Bank Statement Converter</h1>
+    </div>
+    
     <div class="container">
-        <h1>Welcome Back</h1>
-        <p class="subtitle">Sign in using your Active Directory account</p>
+        <p class="subtitle">Sign in to start your session</p>
         
         {% if form.errors %}
         <div class="error">Your username and password didn't match. Please try again.</div>
@@ -154,19 +157,21 @@
         
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="id_username">Username</label>
-                <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username">
+            <div class="input-group">
+                <input type="text" name="username" placeholder="Username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             </div>
             
-            <div class="form-group">
-                <label for="id_password">Password</label>
-                <input type="password" name="password" autocomplete="current-password" required id="id_password">
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Password" autocomplete="current-password" required id="id_password">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
             </div>
             
             <input type="hidden" name="next" value="{{ next }}">
             <button type="submit">Sign In</button>
         </form>
     </div>
+    
+    <div class="version">1.0.0 Stable</div>
 </body>
 </html>
