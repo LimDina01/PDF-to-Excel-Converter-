@@ -136,17 +136,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # --- Active Directory (LDAP) Configuration ---
 # 1. Add LDAP Backend
 AUTHENTICATION_BACKENDS = (
-    # Uncomment the line below in production to enable AD Login!
-    # "django_python3_ldap.auth.LDAPBackend",
+    "django_python3_ldap.auth.LDAPBackend",
     "django.contrib.auth.backends.ModelBackend", # Keep local fallback (like your admin user)
 )
 
 # 2. LDAP Server settings (Update these with your real AD details)
-LDAP_AUTH_URL = "ldap://your-ad-server.local:389"
+LDAP_AUTH_URL = "ldap://CBVH-DCAD01:389"
 LDAP_AUTH_USE_TLS = False
 
 # 3. Active Directory Search Base (e.g. ou=Users,dc=yourdomain,dc=com)
-LDAP_AUTH_SEARCH_BASE = "dc=yourdomain,dc=com"
+LDAP_AUTH_SEARCH_BASE = "DC=cbvh66,DC=com"
 
 # 4. AD Specific mappings
 LDAP_AUTH_OBJECT_CLASS = "user"
@@ -162,11 +161,11 @@ LDAP_AUTH_SYNC_USER_RELATIONS = "core.ldap_sync.custom_sync_user_relations"
 LDAP_AUTH_FORMAT_USERNAME = "django_python3_ldap.utils.format_username_active_directory"
 
 # 5. Your Active Directory Domain
-LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = "YOURDOMAIN"
+LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = "cbvh66"
 
 # 6. Service Account for initial bind (if your AD doesn't allow anonymous binding)
-LDAP_AUTH_CONNECTION_USERNAME = None # e.g. "YOURDOMAIN\\ServiceAccount"
-LDAP_AUTH_CONNECTION_PASSWORD = None
+LDAP_AUTH_CONNECTION_USERNAME = "cbvh66\\pdf_convertor_svc"
+LDAP_AUTH_CONNECTION_PASSWORD = "$Cbvh@168"
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
