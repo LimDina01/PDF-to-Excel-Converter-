@@ -141,7 +141,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # 2. LDAP Server settings (Update these with your real AD details)
-LDAP_AUTH_URL = "ldap://CBVH-DCAD01:389"
+LDAP_AUTH_URL = "ldap://192.168.11.120:389"
 LDAP_AUTH_USE_TLS = False
 
 # 3. Active Directory Search Base (e.g. ou=Users,dc=yourdomain,dc=com)
