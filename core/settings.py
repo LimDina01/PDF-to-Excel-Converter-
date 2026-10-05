@@ -141,8 +141,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # 2. LDAP Server settings (Update these with your real AD details)
-LDAP_AUTH_URL = "ldap://192.168.11.120:389"
-LDAP_AUTH_USE_TLS = False
+import ssl
+LDAP_AUTH_URL = "ldaps://192.168.11.120:636"
+LDAP_AUTH_USE_TLS = False  # Set to False because we are using native LDAPS on port 636, not StartTLS
+LDAP_AUTH_TLS_ARGS = {"validate": ssl.CERT_NONE}
 
 # 3. Active Directory Search Base (e.g. ou=Users,dc=yourdomain,dc=com)
 LDAP_AUTH_SEARCH_BASE = "DC=cbvh66,DC=com"
@@ -164,8 +166,9 @@ LDAP_AUTH_FORMAT_USERNAME = "django_python3_ldap.utils.format_username_active_di
 LDAP_AUTH_ACTIVE_DIRECTORY_DOMAIN = "cbvh66"
 
 # 6. Service Account for initial bind (if your AD doesn't allow anonymous binding)
-LDAP_AUTH_CONNECTION_USERNAME = None
-LDAP_AUTH_CONNECTION_PASSWORD = None
+# 6. Service Account for initial bind (if your AD doesn't allow anonymous binding)
+LDAP_AUTH_CONNECTION_USERNAME = r"cbvh66\pdf_convertor_svc"
+LDAP_AUTH_CONNECTION_PASSWORD = "$Cbvh@168"
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
