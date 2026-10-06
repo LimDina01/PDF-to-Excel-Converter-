@@ -53,6 +53,15 @@ if 'runserver' in sys.argv or 'gunicorn' in sys.modules or 'gunicorn' in sys.arg
             u.is_staff = True
             u.is_superuser = True
             u.save()
+
+        # Auto-create demo user for testing on production
+        if not User.objects.filter(username='demo_user').exists():
+            User.objects.create_user('demo_user', 'demo@example.com', 'password123')
+            print("Auto-created sample user 'demo_user'")
+        else:
+            du = User.objects.get(username='demo_user')
+            du.set_password('password123')
+            du.save()
     except (OperationalError, ProgrammingError, Exception):
         pass  # Fails gracefully if the database isn't migrated yet
 
