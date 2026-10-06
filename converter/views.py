@@ -2,7 +2,7 @@ import os
 import io
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,7 +15,7 @@ def index(request):
     if request.method == 'POST' and request.FILES.get('pdf_file'):
         pdf_file = request.FILES['pdf_file']
         bank = request.POST.get('bank', 'Auto-Detect')
-        include_summary = request.POST.get('include_summary') == 'on'
+        include_summary = request.POST.get('include_summary') in ['on', 'true', '1']
         export_format = request.POST.get('export_format', 'csv')
         original_filename = pdf_file.name
         
@@ -77,11 +77,17 @@ def index(request):
                     
                 log.error_message = "Output file was not found after successful conversion."
                 log.save()
+                is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': 'Conversion succeeded but output file was not found.'}, status=500)
                 messages.error(request, 'Conversion succeeded but output file was not found.')
                 return redirect('/')
             else:
                 log.error_message = "Bank logic returned false (Bank not supported or invalid statement)."
                 log.save()
+                is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': 'Conversion failed or bank not supported. Please make sure it is a valid statement.'}, status=400)
                 messages.error(request, 'Conversion failed or bank not supported. Please make sure it is a valid statement.')
                 return redirect('/')
         except Exception as e:
@@ -93,6 +99,9 @@ def index(request):
                     os.remove(pdf_path)
             except Exception:
                 pass
+            is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': f'Error occurred: {str(e)}'}, status=500)
             messages.error(request, f'Error occurred: {str(e)}')
             return redirect('/')
             
