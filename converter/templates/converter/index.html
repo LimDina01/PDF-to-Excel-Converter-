@@ -226,7 +226,7 @@
             background: #dde2e6;
         }
 
-        button[type="submit"] {
+        .container button[type="submit"] {
             padding: 0.85rem;
             border-radius: 4px;
             background: var(--accent);
@@ -240,7 +240,7 @@
             margin-top: 0.5rem;
         }
 
-        button[type="submit"]:hover {
+        .container button[type="submit"]:hover {
             background: var(--accent-hover);
         }
 
@@ -261,10 +261,22 @@
             font-weight: 400;
         }
         
-        .logout-btn {
+        .user-controls {
             position: absolute;
             top: 1.5rem;
             right: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-greeting {
+            font-size: 0.95rem;
+            color: var(--label-color);
+            font-weight: 600;
+        }
+
+        .logout-btn {
             background: white;
             border: 1px solid #cccccc;
             padding: 0.5rem 1rem;
@@ -287,13 +299,16 @@
     </style>
 </head>
 <body>
-    <form action="{% url 'logout' %}" method="post" style="margin: 0;">
-        {% csrf_token %}
-        <button type="submit" class="logout-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            Log Out
-        </button>
-    </form>
+    <div class="user-controls">
+        <span class="user-greeting">Welcome, {{ user.get_full_name|default:user.username }}</span>
+        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Log Out
+            </button>
+        </form>
+    </div>
 
     <div class="header">
         {% load static %}
