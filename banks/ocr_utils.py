@@ -54,10 +54,11 @@ def is_ocr_available() -> bool:
     return get_tesseract_path() is not None
 
 
-def ocr_crop(pil_image: Image.Image) -> str:
+def ocr_crop(pil_image: Image.Image, lang: str = "khm") -> str:
     """
-    Runs Tesseract on a small cropped PIL image using -l khm+eng.
+    Runs Tesseract on a small cropped PIL image using -l khm.
     Uses PSM 7 (treat image as single line of text) for maximum speed and accuracy.
+    Uses pure 'khm' to avoid English dictionary competition on Khmer words (e.g. jou instead of រួច).
     """
     tesseract_bin = get_tesseract_path()
     if not tesseract_bin:
@@ -72,7 +73,7 @@ def ocr_crop(pil_image: Image.Image) -> str:
             tesseract_bin,
             str(temp_path),
             "stdout",
-            "-l", "khm+eng",
+            "-l", lang,
             "--psm", "7"
         ]
         res = subprocess.run(
@@ -91,21 +92,22 @@ def ocr_crop(pil_image: Image.Image) -> str:
         temp_path.unlink(missing_ok=True)
 
 
-def ocr_khmer_snippet(page_img, x0: float, top: float, x1: float, bottom: float, pad: float = 3.0, scale: float = 3.0) -> str:
+def ocr_khmer_snippet(page_img, x0: float, top: float, x1: float, bottom: float, pad_x0: float = 2.0, pad: float = 2.5, scale: float = 6.0, lang: str = "khm") -> str:
     """
     Crops a Khmer bounding box from the rendered page image and returns cleaned OCR text.
+    Uses scale 6.0 (~430 DPI equivalent) for maximum clarity on tiny subscript vowels like ii (ី).
     """
     if page_img is None or not is_ocr_available():
         return ""
         
     crop_box = (
-        max(0, int((x0 - pad) * scale)),
+        max(0, int((x0 - pad_x0) * scale)),
         max(0, int((top - pad) * scale)),
         min(page_img.width, int((x1 + pad) * scale)),
         min(page_img.height, int((bottom + pad) * scale))
     )
     cropped = page_img.crop(crop_box)
-    raw_ocr = ocr_crop(cropped)
+    raw_ocr = ocr_crop(cropped, lang=lang)
     if raw_ocr:
         return clean_khmer_text(raw_ocr)
     return ""
@@ -114,9 +116,14 @@ def ocr_khmer_snippet(page_img, x0: float, top: float, x1: float, bottom: float,
 def process_desc_words(desc_words, get_page_img, use_ocr=True) -> str:
     """
     Processes words in the description/remark column of a line.
-    If the line has no Khmer text, returns pure digital text immediately (0.00s).
-    If the line has Khmer / missing font glyphs, surgically crops the Khmer segment
-    and enhances it with Tesseract OCR while preserving English prefixes.
+    
+    Digital-First Hybrid Architecture:
+    1. If line has no Khmer text, returns pure digital text immediately (0.00s).
+    2. Digital Authority: If the digital Khmer stream is intact (no \\x00, \\ufffe, \\ufffd),
+       the bank's digital text is used and cleaned with standard linguistic rules.
+       This avoids optical OCR errors on complex 3-level stacked clusters (e.g. បញ្ជី misread as បញ្ឍី).
+    3. Optical Rescue: If the digital text has broken/dropped glyphs (\\x00, \\ufffe, \\ufffd, like in ABA),
+       surgically crops the bounding box and runs Tesseract OCR to restore the missing characters.
     """
     if not desc_words:
         return ""
@@ -126,14 +133,19 @@ def process_desc_words(desc_words, get_page_img, use_ocr=True) -> str:
         for w in desc_words
     )
     
-    if not line_has_khmer or not use_ocr or not is_ocr_available():
+    if not line_has_khmer:
         return " ".join(clean_khmer_text(w['text']) for w in desc_words) + " "
         
     eng_tokens = []
     khm_words = []
+    has_font_corruption = False
+    
     for w in desc_words:
         t = w['text']
-        if any(0x1780 <= ord(c) <= 0x17FF or c in '\x00\ufffe\ufffd' for c in t):
+        if any(c in '\x00\ufffe\ufffd' for c in t):
+            has_font_corruption = True
+            khm_words.append(w)
+        elif any(0x1780 <= ord(c) <= 0x17FF for c in t):
             khm_words.append(w)
         else:
             eng_tokens.append(t)
@@ -141,16 +153,34 @@ def process_desc_words(desc_words, get_page_img, use_ocr=True) -> str:
     if not khm_words:
         return " ".join(w['text'] for w in desc_words) + " "
         
+    # If the digital text has NO font corruption, preserve the exact digital text in natural order.
+    # Optical OCR is only invoked when font glyphs were dropped by the PDF generator (e.g. ABA \\x00 drops).
+    if not has_font_corruption or not use_ocr or not is_ocr_available():
+        return " ".join(clean_khmer_text(w['text']) for w in desc_words) + " "
+        
     kx0 = min(w['x0'] for w in khm_words)
     ktop = min(w['top'] for w in khm_words)
     kx1 = max(w['x1'] for w in khm_words)
     kbottom = max(w['bottom'] for w in khm_words)
     
+    # Don't pad leftward into preceding English text (e.g. 'Remark:' right next to Khmer)
+    prev_tokens = [w for w in desc_words if w['x1'] <= kx0]
+    if prev_tokens:
+        prev_x1 = max(w['x1'] for w in prev_tokens)
+        pad_x0 = max(0.0, min(1.5, kx0 - prev_x1))
+    else:
+        pad_x0 = 2.0
+        
     img = get_page_img() if get_page_img else None
-    ocr_res = ocr_khmer_snippet(img, kx0, ktop, kx1, kbottom) if img else ""
+    ocr_res = ocr_khmer_snippet(img, kx0, ktop, kx1, kbottom, pad_x0=pad_x0) if img else ""
     
     if not ocr_res:
         ocr_res = " ".join(clean_khmer_text(w['text']) for w in khm_words)
         
-    prefix = (" ".join(eng_tokens) + " ") if eng_tokens else ""
-    return prefix + ocr_res + " "
+    prefix_tokens = [w['text'] for w in desc_words if w['x1'] <= kx0]
+    prefix = (" ".join(prefix_tokens) + " ") if prefix_tokens else ""
+    
+    suffix_tokens = [w['text'] for w in desc_words if w['x0'] >= kx1]
+    suffix = (" " + " ".join(suffix_tokens)) if suffix_tokens else ""
+    
+    return prefix + ocr_res + suffix + " "

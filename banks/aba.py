@@ -34,7 +34,7 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
             def get_page_img():
                 if page_img_holder[0] is None and pdfium_doc:
                     try:
-                        page_img_holder[0] = pdfium_doc[i].render(scale=3.0).to_pil()
+                        page_img_holder[0] = pdfium_doc[i].render(scale=6.0).to_pil()
                     except Exception:
                         pass
                 return page_img_holder[0]

@@ -15,7 +15,10 @@ KHMER_BANK_REPLACEMENTS = [
     # Customer keyword ("ភ្ញៀវ")
     (re.compile(r'េភ[\x00\ufffe\ufffd\s]*វ|ភេវ'), 'ភ្ញៀវ'),
     
-    # Settlement / Installment / Payment
+    # Settlement / Installment / Payment / Ledger
+    (re.compile(r'សក្ាប់\s*ររ់'), 'សម្រាប់កក់'),
+    (re.compile(r'សក្ាប់'), 'សម្រាប់'),
+    (re.compile(r'បញ្[ឍហ][ីឺ]'), 'បញ្ជី'),
     (re.compile(r'ទូ[\x00\ufffe\ufffd\s]*ត់'), 'ទូទាត់'),
     (re.compile(r'េលីកទី'), 'លើកទី'),
     (re.compile(r'ទិញរេទះរញុ'), 'ទិញរទេះរុញ'),
@@ -108,7 +111,24 @@ def clean_khmer_text(text: str) -> str:
     # 9. Normalize Unicode canonically (NFC)
     cleaned = unicodedata.normalize('NFC', cleaned)
     
-    # 10. Collapse any resulting multiple whitespace (preserve single spacing between words/numbers)
+    # 10. OCR cluster and coeng corrections
+    # (a) Triple clusters where coeng-to is misread as duplicate coeng-ro (ក្រ្រ -> ក្ត្រ)
+    cleaned = re.sub(r'ក្រ្រ', 'ក្ត្រ', cleaned)
+    # (b) Vocabulary normalization for Sokhpheaktra
+    cleaned = re.sub(r'ភ[ី៍]ក្ត្រ', 'ភ័ក្ត្រ', cleaned)
+    # (c) Deduplicate duplicate coeng of the exact same consonant
+    cleaned = re.sub(r'(\u17D2([\u1780-\u17B3]))\u17D2\2', r'\1', cleaned)
+    # (d) Recover missing base consonant when word starts with coeng-ka (្ក -> ក្រ, e.g. ក្រវិល)
+    cleaned = re.sub(r'(^|\s)\u17D2ក', r'\1ក្រ', cleaned)
+    # (e) Vocabulary normalization for Van Cleef / clip (ឃ្លឹប / ឃ្លឺប -> ឃ្លីប)
+    cleaned = re.sub(r'ឃ្ល[ឹឺ]ប', 'ឃ្លីប', cleaned)
+    # (f) Strip stray leading punctuation, colons, or orphan dependent vowels from OCR crop margins
+    cleaned = re.sub(r'^[:\sៈ|/\\-]+', '', cleaned)
+    cleaned = re.sub(r'^[\u17B4-\u17D1\u17D3]+', '', cleaned)
+    # (g) Dictionary normalization for ledger/bill (បញ្ឍី / បញ្ហី -> បញ្ជី)
+    cleaned = re.sub(r'បញ្[ឍហ][ីឺ]', 'បញ្ជី', cleaned)
+
+    # 11. Collapse any resulting multiple whitespace (preserve single spacing between words/numbers)
     cleaned = re.sub(r'[ \t]+', ' ', cleaned).strip()
     
     return cleaned

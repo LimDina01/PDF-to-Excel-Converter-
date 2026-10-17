@@ -1,21 +1,39 @@
 import pdfplumber
+import pypdfium2 as pdfium
 import pandas as pd
 import re
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 from banks.khmer_utils import clean_khmer_text
+from banks.ocr_utils import process_desc_words, is_ocr_available
 
-def extract_acleda_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=False, **kwargs):
+def extract_acleda_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=True, **kwargs):
     print(f"Reading ACLEDA PDF: {pdf_path}")
     
     rows = []
     current_row = None
     
+    pdfium_doc = None
+    if use_ocr and is_ocr_available():
+        try:
+            pdfium_doc = pdfium.PdfDocument(pdf_path)
+        except Exception:
+            pdfium_doc = None
+
     with pdfplumber.open(pdf_path) as pdf:
         total_pages = len(pdf.pages)
         for i, page in enumerate(pdf.pages):
             if progress_callback:
                 progress_callback(i + 1, total_pages)
             print(f"Extracting page {i + 1}...")
+            
+            page_img_holder = [None]
+            def get_page_img():
+                if page_img_holder[0] is None and pdfium_doc:
+                    try:
+                        page_img_holder[0] = pdfium_doc[i].render(scale=6.0).to_pil()
+                    except Exception:
+                        pass
+                return page_img_holder[0]
             
             words = page.extract_words()
             if not words:
@@ -27,7 +45,7 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
             current_top = words[0]['top']
             
             for w in words:
-                if abs(w['top'] - current_top) > 3:
+                if abs(w['top'] - current_top) > 4.5:
                     current_line.sort(key=lambda x: x['x0'])
                     lines.append(current_line)
                     current_line = [w]
@@ -62,13 +80,16 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
                         'BALANCE': ''
                     }
                     
+                    desc_words = [w for w in line if w['x0'] >= 80 and w['x0'] < 320]
+                    current_row['DESCRIPTIONS'] += process_desc_words(desc_words, get_page_img, use_ocr)
+                    
                     for w in line:
                         x = w['x0']
                         text = w['text']
                         if x < 80:
                             current_row['DATE'] += text + ' '
                         elif x < 320:
-                            current_row['DESCRIPTIONS'] += text + ' '
+                            pass # Processed by process_desc_words
                         elif x < 420:
                             current_row['CASH OUT (Dr)'] += text + ' '
                         elif x < 510:
@@ -77,11 +98,13 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
                             current_row['BALANCE'] += text + ' '
                 else:
                     if current_row:
+                        desc_words = [w for w in line if w['x0'] < 320]
+                        current_row['DESCRIPTIONS'] += process_desc_words(desc_words, get_page_img, use_ocr)
                         for w in line:
                             x = w['x0']
                             text = w['text']
                             if x < 320:
-                                current_row['DESCRIPTIONS'] += text + ' '
+                                pass # Processed by process_desc_words
                             elif x < 420:
                                 current_row['CASH OUT (Dr)'] += text + ' '
                             elif x < 510:

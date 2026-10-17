@@ -1,15 +1,24 @@
 import pdfplumber
+import pypdfium2 as pdfium
 import pandas as pd
 import re
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 from banks.khmer_utils import clean_khmer_text
+from banks.ocr_utils import process_desc_words, is_ocr_available
 
-def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=False, **kwargs):
+def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=True, **kwargs):
     print(f"Reading FTB PDF: {pdf_path}")
     
     rows = []
     current_row = None
     
+    pdfium_doc = None
+    if use_ocr and is_ocr_available():
+        try:
+            pdfium_doc = pdfium.PdfDocument(pdf_path)
+        except Exception:
+            pdfium_doc = None
+
     with pdfplumber.open(pdf_path) as pdf:
         first_page_text = pdf.pages[0].extract_text() or ""
         is_overdraft_layout = 'OVERDRAFT ACCOUNT STATEMENT' in first_page_text
@@ -64,6 +73,15 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
             if progress_callback:
                 progress_callback(i + 1, total_pages)
             print(f"Extracting page {i + 1}...")
+            
+            page_img_holder = [None]
+            def get_page_img():
+                if page_img_holder[0] is None and pdfium_doc:
+                    try:
+                        page_img_holder[0] = pdfium_doc[i].render(scale=6.0).to_pil()
+                    except Exception:
+                        pass
+                return page_img_holder[0]
             
             words = page.extract_words()
             if not words:
@@ -133,6 +151,9 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
                             else:
                                 current_row['Balance'] += text + ' '
                     else:
+                        desc_words = [w for w in line if w['x1'] >= 80 and w['x1'] < col_bounds['ref_end'] and w['x0'] < col_bounds['desc_end']]
+                        current_row['Description'] += process_desc_words(desc_words, get_page_img, use_ocr)
+
                         for w in line:
                             x0 = w['x0']
                             x1 = w['x1']
@@ -143,7 +164,7 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
                             else:
                                 if x1 < col_bounds['ref_end']:
                                     if x0 < col_bounds['desc_end']:
-                                        current_row['Description'] += text + ' '
+                                        pass # Handled by process_desc_words
                                     else:
                                         current_row['Trn Reference'] += text + ' '
                                 elif x1 < col_bounds['out_end']:
@@ -154,13 +175,16 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
                                     current_row['Balance'] += text + ' '
                 else:
                     if current_row:
+                        desc_words = [w for w in line if w['x1'] < col_bounds['ref_end'] and w['x0'] < col_bounds['desc_end']]
+                        current_row['Description'] += process_desc_words(desc_words, get_page_img, use_ocr)
+
                         for w in line:
                             x0 = w['x0']
                             x1 = w['x1']
                             text = w['text']
                             if x1 < col_bounds['ref_end']:
                                 if x0 < col_bounds['desc_end']:
-                                    current_row['Description'] += text + ' '
+                                    pass # Handled by process_desc_words
                                 else:
                                     current_row['Trn Reference'] += text + ' '
                             elif x1 < col_bounds['out_end']:
