@@ -2,8 +2,9 @@ import pdfplumber
 import pandas as pd
 import re
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from banks.khmer_utils import clean_khmer_text
 
-def extract_acleda_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
+def extract_acleda_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=False, **kwargs):
     print(f"Reading ACLEDA PDF: {pdf_path}")
     
     rows = []
@@ -97,10 +98,16 @@ def extract_acleda_statement(pdf_path, output_path, progress_callback=None, incl
     else:
         df = pd.DataFrame(rows)
         
+    # Clean Khmer text and remove illegal XML characters to prevent openpyxl crashes
+    def clean_cell_value(val):
+        if not isinstance(val, str):
+            return val
+        cleaned = clean_khmer_text(val)
+        return ILLEGAL_CHARACTERS_RE.sub('', cleaned)
+
     for col in df.columns:
         df[col] = df[col].astype(str).str.strip()
-        # Remove illegal XML characters to prevent openpyxl crashes
-        df[col] = df[col].apply(lambda val: ILLEGAL_CHARACTERS_RE.sub('', val) if isinstance(val, str) else val)
+        df[col] = df[col].apply(clean_cell_value)
         
     if 'DATE' in df.columns and not df.empty:
         df['DATE'] = pd.to_datetime(df['DATE'], format='%b %d, %Y', errors='coerce')

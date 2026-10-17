@@ -1,9 +1,12 @@
 import pdfplumber
+import pypdfium2 as pdfium
 import pandas as pd
 import re
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from banks.khmer_utils import clean_khmer_text
+from banks.ocr_utils import process_desc_words, is_ocr_available
 
-def extract_aba_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
+def extract_aba_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=True):
     print(f"Reading ABA PDF: {pdf_path}")
     
     rows = []
@@ -11,6 +14,14 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
     has_started_transactions = False
     seen_table_headers = False
     
+    # Open the PDF for optional surgical OCR rendering
+    pdfium_doc = None
+    if use_ocr and is_ocr_available():
+        try:
+            pdfium_doc = pdfium.PdfDocument(pdf_path)
+        except Exception:
+            pdfium_doc = None
+
     # Open the PDF
     with pdfplumber.open(pdf_path) as pdf:
         total_pages = len(pdf.pages)
@@ -18,6 +29,15 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
             if progress_callback:
                 progress_callback(i + 1, total_pages)
             print(f"Extracting page {i + 1}...")
+            
+            page_img_holder = [None]
+            def get_page_img():
+                if page_img_holder[0] is None and pdfium_doc:
+                    try:
+                        page_img_holder[0] = pdfium_doc[i].render(scale=3.0).to_pil()
+                    except Exception:
+                        pass
+                return page_img_holder[0]
             
             words = page.extract_words()
             if not words:
@@ -109,7 +129,11 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                                 else:
                                     current_row['TRANSACTION DETAILS'] += text + ' '
                     else:
-                        # Assign words to columns based on x1 coordinate for amounts, x0 for date
+                        # Process description words with hybrid surgical OCR
+                        desc_words = [w for w in line if w['x0'] >= 90 and w['x1'] < 290]
+                        current_row['TRANSACTION DETAILS'] += process_desc_words(desc_words, get_page_img, use_ocr)
+
+                        # Assign remaining words to columns based on x1 coordinate
                         for w in line:
                             x0 = w['x0']
                             x1 = w['x1']
@@ -118,7 +142,7 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                             if x0 < 90:
                                 current_row['VALUE DATE'] += text + ' '
                             elif x1 < 290:
-                                current_row['TRANSACTION DETAILS'] += text + ' '
+                                pass # Handled by process_desc_words
                             elif x1 < 390:
                                 current_row['MONEY IN'] += text + ' '
                             elif x1 < 480:
@@ -128,6 +152,9 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                 else:
                     # It's a continuation line. 
                     if current_row:
+                        desc_words = [w for w in line if w['x1'] < 290]
+                        current_row['TRANSACTION DETAILS'] += process_desc_words(desc_words, get_page_img, use_ocr)
+
                         for w in line:
                             x0 = w['x0']
                             x1 = w['x1']
@@ -136,7 +163,7 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
                             if x0 < 90:
                                 current_row['VALUE DATE'] += text + ' '
                             elif x1 < 290:
-                                current_row['TRANSACTION DETAILS'] += text + ' '
+                                pass # Handled by process_desc_words
                             elif x1 < 390:
                                 current_row['MONEY IN'] += text + ' '
                             elif x1 < 480:
@@ -177,14 +204,15 @@ def extract_aba_statement(pdf_path, output_path, progress_callback=None, include
         money_out = df['MONEY OUT'].fillna(0)
         df['Statement Amount'] = money_in - money_out
 
-    # Strip illegal characters that crash Excel (openpyxl)
-    def clean_illegal_chars(val):
+    # Clean Khmer text and strip illegal characters that crash Excel (openpyxl)
+    def clean_cell_value(val):
         if not isinstance(val, str):
             return val
-        return ILLEGAL_CHARACTERS_RE.sub('', val)
+        cleaned = clean_khmer_text(val)
+        return ILLEGAL_CHARACTERS_RE.sub('', cleaned)
 
     for col in df.columns:
-        df[col] = df[col].apply(clean_illegal_chars)
+        df[col] = df[col].apply(clean_cell_value)
 
     # Save to CSV
     print(f"Exporting data to: {output_path}")

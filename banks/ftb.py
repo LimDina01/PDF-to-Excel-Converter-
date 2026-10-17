@@ -2,8 +2,9 @@ import pdfplumber
 import pandas as pd
 import re
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
+from banks.khmer_utils import clean_khmer_text
 
-def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include_summary=False):
+def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include_summary=False, use_ocr=False, **kwargs):
     print(f"Reading FTB PDF: {pdf_path}")
     
     rows = []
@@ -178,9 +179,16 @@ def extract_ftb_statement(pdf_path, output_path, progress_callback=None, include
     else:
         df = pd.DataFrame(rows)
         
+    # Clean Khmer text and remove illegal XML characters to prevent openpyxl crashes
+    def clean_cell_value(val):
+        if not isinstance(val, str):
+            return val
+        cleaned = clean_khmer_text(val)
+        return ILLEGAL_CHARACTERS_RE.sub('', cleaned)
+
     for col in df.columns:
         df[col] = df[col].astype(str).str.strip()
-        df[col] = df[col].apply(lambda val: ILLEGAL_CHARACTERS_RE.sub('', val) if isinstance(val, str) else val)
+        df[col] = df[col].apply(clean_cell_value)
         
     if 'Trn Date' in df.columns:
         df['Trn Date'] = pd.to_datetime(df['Trn Date'], format='%d-%b-%Y', errors='coerce')

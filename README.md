@@ -3,11 +3,11 @@
 This guide covers everything your IT administrator needs to deploy the Bank Statement Converter application to a production Ubuntu Server.
 
 ## 1. Prepare the Server
-Update the server and install the required system packages, including Python 3, Nginx (web server), and Supervisor (process manager).
+Update the server and install the required system packages, including Python 3, Nginx (web server), Supervisor (process manager), and Tesseract OCR with Khmer language support.
 
 ```bash
 sudo apt update
-sudo apt install -y python3 python3-pip python3-venv python3-dev nginx supervisor
+sudo apt install -y python3 python3-pip python3-venv python3-dev nginx supervisor tesseract-ocr tesseract-ocr-khm
 ```
 
 ## 2. Transfer the Code

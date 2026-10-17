@@ -7,15 +7,18 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from convert_statement import extract_bank_statement
+from banks.ocr_utils import is_ocr_available
 from .models import ConversionLog
 import os
 
 @login_required
 def index(request):
+    ocr_supported = is_ocr_available()
     if request.method == 'POST' and request.FILES.get('pdf_file'):
         pdf_file = request.FILES['pdf_file']
         bank = request.POST.get('bank', 'Auto-Detect')
         include_summary = request.POST.get('include_summary') in ['on', 'true', '1']
+        use_ocr = request.POST.get('use_ocr') in ['on', 'true', '1'] if 'use_ocr' in request.POST else ocr_supported
         export_format = request.POST.get('export_format', 'csv')
         original_filename = pdf_file.name
         
@@ -37,7 +40,7 @@ def index(request):
         output_path = os.path.join(settings.MEDIA_ROOT, output_filename)
         
         try:
-            success = extract_bank_statement(pdf_path, output_path, bank=bank, include_summary=include_summary)
+            success = extract_bank_statement(pdf_path, output_path, bank=bank, include_summary=include_summary, use_ocr=use_ocr)
             
             # Delete the original PDF file immediately for privacy
             try:
@@ -105,4 +108,4 @@ def index(request):
             messages.error(request, f'Error occurred: {str(e)}')
             return redirect('/')
             
-    return render(request, 'converter/index.html')
+    return render(request, 'converter/index.html', {'ocr_available': ocr_supported})

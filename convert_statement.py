@@ -15,7 +15,7 @@ from banks.acleda import extract_acleda_statement
 from banks.ftb import extract_ftb_statement
 from banks.canadia import extract_canadia_statement
 
-def extract_bank_statement(pdf_path, output_path, progress_callback=None, include_summary=False, bank="Auto-Detect"):
+def extract_bank_statement(pdf_path, output_path, progress_callback=None, include_summary=False, bank="Auto-Detect", use_ocr=True):
     if bank == "Auto-Detect":
         with pdfplumber.open(pdf_path) as pdf:
             if len(pdf.pages) > 0:
@@ -37,28 +37,31 @@ def extract_bank_statement(pdf_path, output_path, progress_callback=None, includ
                 bank = "ABA"
     
     if bank == "ABA":
-        return extract_aba_statement(pdf_path, output_path, progress_callback, include_summary)
+        return extract_aba_statement(pdf_path, output_path, progress_callback, include_summary, use_ocr=use_ocr)
     elif bank == "BRED":
-        return extract_bred_statement(pdf_path, output_path, progress_callback, include_summary)
+        return extract_bred_statement(pdf_path, output_path, progress_callback, include_summary, use_ocr=use_ocr)
     elif bank == "ACLEDA":
-        return extract_acleda_statement(pdf_path, output_path, progress_callback, include_summary)
+        return extract_acleda_statement(pdf_path, output_path, progress_callback, include_summary, use_ocr=use_ocr)
     elif bank == "FTB":
-        return extract_ftb_statement(pdf_path, output_path, progress_callback, include_summary)
+        return extract_ftb_statement(pdf_path, output_path, progress_callback, include_summary, use_ocr=use_ocr)
     elif bank == "CANADIA":
-        return extract_canadia_statement(pdf_path, output_path, progress_callback, include_summary)
+        return extract_canadia_statement(pdf_path, output_path, progress_callback, include_summary, use_ocr=use_ocr)
     else:
         print(f"Bank logic for {bank} is not yet implemented.")
         return False
 
 if __name__ == "__main__":
+    use_ocr = True
     if len(sys.argv) > 1:
         # User dragged and dropped a file, or used command line
         parser = argparse.ArgumentParser(description="Convert ABA Bank Statement PDF to CSV")
         parser.add_argument("input_pdf", help="Path to the input PDF file")
         parser.add_argument("--output", "-o", default="statement_output.csv", help="Path to the output CSV file")
+        parser.add_argument("--no-ocr", action="store_true", help="Disable surgical OCR for Khmer text")
         args = parser.parse_args()
         input_pdf = args.input_pdf
         output = args.output
+        use_ocr = not args.no_ocr
     else:
         # User just double-clicked the .exe
         print("========================================================")
@@ -103,10 +106,11 @@ if __name__ == "__main__":
             input_pdf = input("Please type or paste the path to your PDF file here: ").strip('"').strip("'").strip()
             output = "output_for_bc.csv"
         
+    is_interactive = len(sys.argv) <= 1
     if input_pdf:
         try:
-            success = extract_bank_statement(input_pdf, output)
-            if success:
+            success = extract_bank_statement(input_pdf, output, use_ocr=use_ocr)
+            if success and is_interactive:
                 import os
                 import subprocess
                 try:
@@ -125,5 +129,6 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"An error occurred: {e}")
         
-    print("\nPress Enter to exit...")
-    input()
+    if is_interactive:
+        print("\nPress Enter to exit...")
+        input()
