@@ -18,11 +18,17 @@ def check_reconciliation(df):
     Returns (status_text, is_balanced)
     """
     bal_col = next((c for c in df.columns if 'BALANCE' in c.upper()), None)
-    in_col = next((c for c in df.columns if any(k in c.upper() for k in ['MONEY IN', 'CR', 'CREDIT', 'CASH IN'])), None)
-    out_col = next((c for c in df.columns if any(k in c.upper() for k in ['MONEY OUT', 'DR', 'DEBIT', 'CASH OUT'])), None)
-
     if not bal_col:
         return f"{len(df)} transactions", True
+
+    in_col = None
+    out_col = None
+    for c in df.columns:
+        cu = c.upper().strip()
+        if any(cu == k or cu.startswith(k) or cu.endswith(k) for k in ['MONEY IN', 'CASH IN', 'CREDIT', 'DEPOSIT', 'INFLOW', 'PAID IN']) or cu in ['CR', 'CR.']:
+            in_col = c
+        if any(cu == k or cu.startswith(k) or cu.endswith(k) for k in ['MONEY OUT', 'CASH OUT', 'DEBIT', 'WITHDRAWAL', 'OUTFLOW', 'PAID OUT']) or cu in ['DR', 'DR.']:
+            out_col = c
 
     def to_float(v):
         if pd.isna(v) or v == '': return 0.0
