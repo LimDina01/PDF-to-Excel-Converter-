@@ -3,716 +3,1222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Statement Converter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Bank Statement Converter • CBVH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
-            --bg-color: #f3f6f9;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --text-muted: #64748b;
-            --input-border: #e2e8f0;
-            --input-bg: #ffffff;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --label-color: #334155;
-            --btn-bg: #f8fafc;
-            --btn-border: #cbd5e1;
-            --btn-text: #0f172a;
-            --btn-hover: #f1f5f9;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Luxury Palette (Porcelain & Warm Rose-Gold Slate) */
+            --bg-page: #f8fafc;
+            --bg-radial: radial-gradient(circle at 50% 0%, #fdfbf7 0%, #f1f5f9 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: #e2e8f0;
+            --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05), 0 0 1px 1px rgba(0, 0, 0, 0.02);
+            --card-inner-bg: #f8fafc;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            
+            --brand-gold: #b38b4d;
+            --brand-gold-hover: #9c753b;
+            --brand-gold-light: rgba(179, 139, 77, 0.12);
+            --brand-gold-glow: rgba(179, 139, 77, 0.25);
+            
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-glow: rgba(37, 99, 235, 0.25);
+            
             --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
             --error: #ef4444;
-            --pending: #94a3b8;
-            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            --border-radius: 16px;
+            --error-bg: rgba(239, 68, 68, 0.1);
+            
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --nav-height: 86px;
         }
 
         body.dark-mode {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --input-border: #334155;
-            --input-bg: #1e293b;
+            --bg-page: #090d16;
+            --bg-radial: radial-gradient(circle at 50% 0%, #141c2e 0%, #080c14 100%);
+            --card-bg: rgba(19, 26, 41, 0.88);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+            --card-inner-bg: rgba(15, 23, 42, 0.6);
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            
+            --brand-gold: #c5a059;
+            --brand-gold-hover: #d8b26e;
+            --brand-gold-light: rgba(197, 160, 89, 0.15);
+            --brand-gold-glow: rgba(197, 160, 89, 0.3);
+            
             --accent: #3b82f6;
             --accent-hover: #60a5fa;
-            --label-color: #e2e8f0;
-            --btn-bg: #334155;
-            --btn-border: #475569;
-            --btn-text: #f8fafc;
-            --btn-hover: #475569;
-            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            --accent-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            padding: 68px 1rem 1.25rem 1rem;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg-color);
-            color: var(--text-color);
+            padding: 0;
+            font-family: var(--font-body);
+            background: var(--bg-radial);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            transition: background-color 0.3s ease;
+            transition: background 0.4s ease, color 0.3s ease;
+            overflow-x: hidden;
         }
 
-        .top-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* Top Bar */
+        .top-navbar {
             width: 100%;
-            padding: 0.65rem 1.5rem;
-            box-sizing: border-box;
+            height: var(--nav-height);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border);
+            transition: all 0.3s ease;
         }
 
-        .top-bar-logo {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 0.5rem;
-            max-height: 52px;
+        body.dark-mode .top-navbar {
+            background: rgba(10, 15, 26, 0.75);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .user-greeting {
-            font-size: 0.92rem;
-            color: var(--label-color);
-            font-weight: 500;
-        }
-
-        .logout-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--input-border);
-            padding: 0.45rem 0.85rem;
-            border-radius: 8px;
-            color: var(--text-color);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
+        .nav-logo-wrap {
             display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            max-height: 52px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.25s ease;
+        }
+
+        .brand-logo-img:hover {
+            transform: scale(1.03);
+        }
+
+        .brand-title-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: var(--brand-gold);
+        }
+
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.45rem 0.95rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .user-avatar-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        .nav-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.5rem 0.95rem;
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.84rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            font-family: 'Outfit', sans-serif;
-        }
-        
-        .logout-btn:hover {
-            background: var(--btn-hover);
-            border-color: var(--text-muted);
+            text-decoration: none;
         }
 
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text-color);
+        .nav-btn:hover {
+            background: var(--card-inner-bg);
+            border-color: var(--text-muted);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.45rem;
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             transition: all 0.2s ease;
         }
-        .theme-toggle:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        body.dark-mode .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
+
+        .theme-toggle-btn:hover {
+            background: var(--card-inner-bg);
+            border-color: var(--text-muted);
+            transform: scale(1.05);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 0.35rem;
-            margin-top: 0;
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 1.45rem;
-            font-weight: 700;
-            color: var(--label-color);
-            letter-spacing: -0.5px;
-        }
-
-        .container {
-            background: var(--card-bg);
-            border: 1px solid var(--input-border);
-            border-radius: var(--border-radius);
-            padding: 1.15rem 1.5rem;
+        /* Workspace Grid Container */
+        .workspace-wrapper {
             width: 100%;
-            max-width: 560px;
-            box-shadow: var(--card-shadow);
-            box-sizing: border-box;
-            margin-bottom: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group {
+            max-width: 1220px;
+            padding: 2.25rem 2rem 3.5rem 2rem;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
-            margin-bottom: 0.55rem;
+            gap: 1.5rem;
         }
 
-        label {
+        .workspace-intro {
+            text-align: left;
+            margin-bottom: 0.25rem;
+        }
+
+        .workspace-intro h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            margin: 0 0 0.4rem 0;
+            color: var(--text-primary);
+        }
+
+        .workspace-intro p {
+            margin: 0;
             font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--label-color);
+            color: var(--text-secondary);
         }
 
-        /* Custom Select Styles */
+        .main-dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.75rem;
+            width: 100%;
+            align-items: start;
+        }
+
+        @media (max-width: 980px) {
+            .main-dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Luxury Cards */
+        .hub-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.35rem;
+            position: relative;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .panel-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .panel-icon-wrap {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--brand-gold-light);
+            color: var(--brand-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .panel-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .badge-counter {
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            color: var(--text-secondary);
+        }
+
+        /* Form Controls */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Custom Select */
         .custom-select-wrapper {
             position: relative;
             user-select: none;
             width: 100%;
         }
+
         .custom-select {
             position: relative;
-            display: flex;
-            flex-direction: column;
             cursor: pointer;
         }
+
         .custom-select__trigger {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            color: var(--text-color);
+            padding: 0.8rem 1.1rem;
+            border-radius: var(--radius-md);
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.94rem;
             transition: all 0.2s ease;
-            font-weight: 500;
         }
+
+        .custom-select:hover .custom-select__trigger {
+            border-color: var(--brand-gold);
+        }
+
         .custom-select.open .custom-select__trigger {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            border-color: var(--brand-gold);
+            box-shadow: 0 0 0 3px var(--brand-gold-light);
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
         }
+
         .arrow {
             position: relative;
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
         }
         .arrow::before, .arrow::after {
             content: "";
             position: absolute;
             bottom: 0px;
-            width: 0.15rem;
+            width: 2px;
             height: 100%;
-            transition: all 0.3s;
+            transition: all 0.25s;
             background: var(--text-muted);
             border-radius: 2px;
         }
-        .arrow::before { left: -4px; transform: rotate(45deg); }
+        .arrow::before { left: -3px; transform: rotate(45deg); }
         .arrow::after { left: 2px; transform: rotate(-45deg); }
         .open .arrow::before { transform: rotate(-45deg); }
         .open .arrow::after { transform: rotate(45deg); }
-        
+
         .custom-options {
             position: absolute;
-            display: block;
             top: 100%;
             left: 0;
             right: 0;
-            border: 1px solid var(--input-border);
+            border: 1px solid var(--card-border);
             border-top: 0;
             background: var(--card-bg);
-            transition: all 0.2s;
+            backdrop-filter: blur(16px);
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            z-index: 2;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            z-index: 50;
+            border-bottom-left-radius: var(--radius-md);
+            border-bottom-right-radius: var(--radius-md);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
         }
+
         .custom-select.open .custom-options {
             opacity: 1;
             visibility: visible;
             pointer-events: all;
-            transform: translateY(0);
-        }
-        .custom-option {
-            position: relative;
-            display: block;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .custom-option:hover {
-            background-color: var(--btn-hover);
-        }
-        .custom-option.selected {
-            color: white;
-            background-color: var(--accent);
         }
 
-        /* Drag and Drop Zone */
+        .custom-option {
+            padding: 0.8rem 1.1rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .custom-option:hover {
+            background-color: var(--brand-gold-light);
+            color: var(--brand-gold);
+        }
+
+        .custom-option.selected {
+            background: var(--brand-gold);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Spacious Luxury Drop Zone */
         .drop-zone {
-            border: 2px dashed var(--input-border);
-            border-radius: 10px;
-            padding: 0.85rem 1rem;
+            border: 2px dashed var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem 1.5rem;
             text-align: center;
             cursor: pointer;
-            background: var(--btn-bg);
-            transition: all 0.2s ease;
+            background: var(--card-inner-bg);
+            transition: all 0.25s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.15rem;
+            justify-content: center;
+            gap: 0.65rem;
+            position: relative;
+            overflow: hidden;
         }
+
         .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--accent);
-            background: rgba(59, 130, 246, 0.05);
+            border-color: var(--brand-gold);
+            background: var(--brand-gold-light);
+            box-shadow: 0 0 25px var(--brand-gold-light);
+            transform: translateY(-2px);
         }
-        .drop-zone svg {
-            width: 28px;
-            height: 28px;
-            color: var(--accent);
-            margin-bottom: 0.15rem;
+
+        .drop-icon-aura {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-gold);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+            transition: transform 0.25s ease;
         }
-        .drop-zone-text {
+
+        .drop-zone:hover .drop-icon-aura {
+            transform: scale(1.1) rotate(-3deg);
+            color: var(--brand-gold-hover);
+        }
+
+        .drop-title {
+            font-family: var(--font-display);
+            font-size: 1.12rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .drop-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .drop-supported-tags {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            justify-content: center;
+        }
+
+        .bank-badge {
+            font-size: 0.72rem;
             font-weight: 600;
-            font-size: 0.92rem;
-            color: var(--text-color);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
         }
-        .drop-zone-subtext {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
+
         #pdf_file {
             display: none;
         }
 
-        /* Buttons & Inputs */
-        .radio-group label, .checkbox-group label {
-            color: var(--text-color);
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.86rem;
-        }
-        
-        .main-btn {
-            padding: 0.65rem;
-            border-radius: 8px;
-            background: var(--accent);
-            color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin-top: 0.65rem;
-            font-family: 'Outfit', sans-serif;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
-        }
-        .main-btn:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-        .main-btn:disabled {
-            background: var(--text-muted);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Integrated Queue Container */
-        .queue-container {
-            width: 100%;
-            display: none;
-            margin-top: 0.65rem;
-            margin-bottom: 0.25rem;
-            animation: fadeIn 0.25s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .queue-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.35rem;
-            padding: 0 0.15rem;
-        }
-        .queue-header h2 {
-            margin: 0;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--label-color);
-        }
-        .zip-btn {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.78rem;
-            font-family: 'Outfit', sans-serif;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            gap: 0.35rem;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px -1px rgba(16, 185, 129, 0.25);
-        }
-        .zip-btn:hover {
-            background: #059669;
-            transform: translateY(-1px);
-        }
-
-        .file-list {
+        /* Settings Pills & Format Controls */
+        .options-grid {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            max-height: 180px;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-        .file-list::-webkit-scrollbar {
-            width: 5px;
-        }
-        .file-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .file-list::-webkit-scrollbar-thumb {
-            background: var(--btn-border);
-            border-radius: 4px;
+            gap: 0.85rem;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            padding: 1.1rem 1.25rem;
+            border-radius: var(--radius-md);
         }
 
-        .file-item {
+        .option-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.55rem 0.8rem;
-            min-height: 50px;
-            box-sizing: border-box;
-            background: var(--btn-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            font-size: 0.88rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
+            justify-content: space-between;
         }
-        .file-item:hover {
-            border-color: var(--accent);
-        }
-        .file-item-left {
+
+        .switch-label-wrap {
             display: flex;
             align-items: center;
             gap: 0.65rem;
-            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
         }
-        .file-item-right {
+
+        .switch-label-wrap input[type="checkbox"] {
+            width: 1.15rem;
+            height: 1.15rem;
+            cursor: pointer;
+            accent-color: var(--brand-gold);
+        }
+
+        .switch-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.45rem;
         }
-        .file-item-name {
-            font-weight: 500;
-            color: var(--text-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 250px;
-            font-size: 0.84rem;
-        }
-        .file-item-status {
+
+        .pill-badge {
+            font-size: 0.68rem;
             font-weight: 700;
-            font-size: 0.72rem;
-            padding: 0.25rem 0.55rem;
-            border-radius: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            display: inline-flex;
+            padding: 2px 7px;
+            border-radius: 9999px;
+            letter-spacing: 0.3px;
+        }
+
+        .pill-active {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .pill-disabled {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-muted);
+        }
+
+        /* Segmented Radio Tab for Export Format */
+        .segmented-control {
+            display: flex;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 3px;
+            border-radius: 10px;
+            gap: 3px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.35rem;
-            min-width: 68px;
-            text-align: center;
-        }
-        .status-pending { background: var(--card-bg); border: 1px solid var(--input-border); color: var(--text-muted); }
-        .status-processing { background: rgba(59, 130, 246, 0.12); color: var(--accent); }
-        .status-success { background: rgba(16, 185, 129, 0.12); color: var(--success); }
-        .status-error { background: rgba(239, 68, 68, 0.12); color: var(--error); }
-        
-        .file-item.is-processing {
-            border-color: var(--accent);
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
-            background: linear-gradient(90deg, var(--btn-bg) 0%, rgba(59, 130, 246, 0.08) 50%, var(--btn-bg) 100%);
-            background-size: 200% 100%;
-            animation: cardShimmer 2.5s infinite ease-in-out;
         }
 
-        @keyframes cardShimmer {
+        .segment-btn.active {
+            background: var(--brand-gold);
+            color: #ffffff;
+            box-shadow: 0 2px 8px var(--brand-gold-glow);
+        }
+
+        /* Right Panel: Active Queue & Empty States */
+        .queue-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-height: 380px;
+        }
+
+        .empty-queue-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            border: 1px dashed var(--card-border);
+            border-radius: var(--radius-md);
+            background: var(--card-inner-bg);
+            min-height: 290px;
+        }
+
+        .empty-queue-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            margin-bottom: 0.85rem;
+        }
+
+        .empty-queue-title {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 0.3rem 0;
+        }
+
+        .empty-queue-desc {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            max-width: 320px;
+            margin: 0;
+            line-height: 1.45;
+        }
+
+        .audit-features-list {
+            margin-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+            width: 100%;
+            max-width: 340px;
+        }
+
+        .audit-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .audit-feature-icon {
+            color: var(--brand-gold);
+            flex-shrink: 0;
+        }
+
+        /* File Item Cards */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .file-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .file-list::-webkit-scrollbar-thumb {
+            background: var(--card-border);
+            border-radius: 4px;
+        }
+
+        .file-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 0.85rem 1.15rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .file-card:hover {
+            border-color: var(--brand-gold);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .file-card.is-processing {
+            border-color: var(--accent);
+            background: linear-gradient(90deg, var(--card-inner-bg) 0%, rgba(59, 130, 246, 0.05) 50%, var(--card-inner-bg) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite ease-in-out;
+        }
+
+        @keyframes shimmer {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
 
-        .file-bottom-progress {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            width: 0%;
-            background: linear-gradient(90deg, #3b82f6, #60a5fa, #38bdf8);
-            box-shadow: 0 -1px 6px rgba(59, 130, 246, 0.4);
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 2;
+        .file-card-left {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .file-icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .file-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-size-tag {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            white-space: nowrap;
         }
 
         .file-stage-text {
             color: var(--accent);
             font-size: 0.78rem;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .audit-status-tag {
+            font-size: 0.78rem;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            line-height: 1.2;
+            gap: 4px;
         }
 
-        .file-stage-text::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent);
-            animation: pulseDot 1s infinite alternate;
+        .audit-status-tag.balanced {
+            color: var(--success);
+        }
+
+        .audit-status-tag.discrepancy {
+            color: var(--warning);
+        }
+
+        .file-card-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             flex-shrink: 0;
         }
 
-        @keyframes pulseDot {
-            0% { opacity: 0.4; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
+        .status-badge {
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding: 0.3rem 0.65rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            min-width: 74px;
+            justify-content: center;
         }
 
-        .spinner-sm {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border: 2px solid rgba(59, 130, 246, 0.25);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            flex-shrink: 0;
+        .badge-pending {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
         }
 
-        .btn-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.35);
+        .badge-processing {
+            background: rgba(37, 99, 235, 0.12);
+            color: var(--accent);
+        }
+
+        .badge-done {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .badge-error {
+            background: var(--error-bg);
+            color: var(--error);
+        }
+
+        .card-icon-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.4rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .card-icon-btn:hover {
+            color: var(--error);
+            border-color: var(--error);
+            background: var(--error-bg);
+        }
+
+        .dl-card-btn {
+            background: var(--brand-gold);
+            border: 1px solid var(--brand-gold);
+            color: #ffffff;
+            cursor: pointer;
+            padding: 0.4rem 0.65rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px var(--brand-gold-glow);
+        }
+
+        .dl-card-btn:hover {
+            background: var(--brand-gold-hover);
+            transform: translateY(-1px);
+        }
+
+        .file-card-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #38bdf8);
+            transition: width 0.3s ease;
+        }
+
+        /* Zip & Process Buttons */
+        .zip-all-btn {
+            background: var(--brand-gold);
+            color: #ffffff;
+            border: none;
+            padding: 0.45rem 0.95rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            font-family: var(--font-body);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px var(--brand-gold-glow);
+        }
+
+        .zip-all-btn:hover {
+            background: var(--brand-gold-hover);
+            transform: translateY(-1px);
+        }
+
+        .primary-action-btn {
+            width: 100%;
+            padding: 0.95rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--brand-gold) 0%, #9c753b 100%);
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px var(--brand-gold-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .primary-action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px var(--brand-gold-glow);
+            background: linear-gradient(135deg, #c5a059 0%, var(--brand-gold) 100%);
+        }
+
+        .primary-action-btn:disabled {
+            background: var(--card-border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Notice Banner */
+        .executive-notice-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            background: rgba(179, 139, 77, 0.08);
+            border: 1px solid rgba(179, 139, 77, 0.25);
+            color: #92672b;
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            line-height: 1.45;
+            margin-top: 0.25rem;
+        }
+
+        body.dark-mode .executive-notice-banner {
+            background: rgba(197, 160, 89, 0.1);
+            border-color: rgba(197, 160, 89, 0.25);
+            color: #dfba78;
+        }
+
+        /* Spinners */
+        .spinner-ring {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: #ffffff;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
+        }
+
+        .spinner-accent {
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(37, 99, 235, 0.25);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        .remove-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 0.3rem;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .remove-btn:hover {
-            color: var(--error);
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .dl-icon-btn {
-            background: none;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 0.3rem;
-            border-radius: 5px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-        .dl-icon-btn:hover {
-            background: rgba(59, 130, 246, 0.12);
-        }
-
-        .disclaimer-banner {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(245, 158, 11, 0.08);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            color: #b45309;
-            padding: 0.45rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.76rem;
-            line-height: 1.35;
-            margin-top: 0.65rem;
-        }
-        body.dark-mode .disclaimer-banner {
-            background: rgba(245, 158, 11, 0.12);
-            border-color: rgba(245, 158, 11, 0.3);
-            color: #fbbf24;
-        }
-        .file-audit-meta {
-            font-size: 0.76rem;
-            color: var(--success);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
-        }
-        .file-audit-meta.has-discrepancy {
-            color: #f59e0b;
-        }
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <form action="{% url 'logout' %}" method="post" style="margin: 0;">
-            {% csrf_token %}
-            <button type="submit" class="logout-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                Log Out
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <a href="/" class="nav-logo-wrap">
+            {% load static %}
+            <img src="{% static 'converter/img/logo.png' %}" alt="CBVH Jewelry" class="brand-logo-img">
+            <div class="brand-title-group">
+                <span class="brand-name">Bank Statement Converter</span>
+                <span class="brand-subtitle">Chang Bak Van Heng • Jewelry</span>
+            </div>
+        </a>
+
+        <div class="nav-right-actions">
+            {% if user.is_staff %}
+            <a href="/admin/" class="nav-btn" target="_blank" title="Open Admin & Conversion Audit Logs">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Audit Log
+            </a>
+            {% endif %}
+
+            <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             </button>
-        </form>
-        {% load static %}
-        <img src="{% static 'converter/img/logo.png' %}" alt="Logo" class="top-bar-logo">
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
-                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            </button>
-            <span class="user-greeting">Welcome, {{ user.get_full_name|default:user.username }}</span>
+
+            <div class="user-pill">
+                <span class="user-avatar-dot"></span>
+                <span>{{ user.get_full_name|default:user.username }}</span>
+            </div>
+
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="nav-btn" title="Sign out">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Logout
+                </button>
+            </form>
         </div>
-    </div>
+    </nav>
 
-    <div class="header">
-        <h1>Bank Statement Converter</h1>
-    </div>
+    <!-- Workspace Main Body -->
+    <main class="workspace-wrapper">
+        <div class="workspace-intro">
+            <h1>Financial Statement Conversion & Audit</h1>
+            <p>Convert bank PDF statements into balanced accounting ledgers with automatic mathematical verification.</p>
+        </div>
 
-    <div class="container">
-        <form id="uploadForm">
+        <form id="uploadForm" class="main-dashboard-grid" onsubmit="return false;">
             {% csrf_token %}
-            
-            <div class="form-group">
-                <label>Select Bank</label>
-                <div class="custom-select-wrapper">
-                    <div class="custom-select">
-                        <div class="custom-select__trigger">
-                            <span id="bank_display">Auto-Detect</span>
-                            <div class="arrow"></div>
+
+            <!-- Left Panel: Ingestion & Bank Options -->
+            <section class="hub-panel">
+                <div class="panel-header">
+                    <div class="panel-header-title">
+                        <div class="panel-icon-wrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                         </div>
-                        <div class="custom-options">
-                            <span class="custom-option selected" data-value="Auto-Detect">Auto-Detect</span>
-                            <span class="custom-option" data-value="ABA">ABA Bank</span>
-                            <span class="custom-option" data-value="BRED">BRED Bank</span>
-                            <span class="custom-option" data-value="ACLEDA">ACLEDA Bank</span>
-                            <span class="custom-option" data-value="FTB">FTB Bank</span>
-                            <span class="custom-option" data-value="CANADIA">Canadia Bank</span>
+                        <h2>Upload & Configure</h2>
+                    </div>
+                    <span class="badge-counter">Step 1</span>
+                </div>
+
+                <!-- Bank Selection -->
+                <div class="control-group">
+                    <label class="control-label">
+                        <span>Select Target Bank</span>
+                        <span style="font-size:0.76rem; color:var(--text-muted); font-weight:normal;">Auto-detection supported</span>
+                    </label>
+                    <div class="custom-select-wrapper">
+                        <div class="custom-select" id="bankCustomSelect">
+                            <div class="custom-select__trigger">
+                                <span id="bank_display">Auto-Detect</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options">
+                                <span class="custom-option selected" data-value="Auto-Detect">Auto-Detect (Recommended)</span>
+                                <span class="custom-option" data-value="ABA">ABA Bank</span>
+                                <span class="custom-option" data-value="ACLEDA">ACLEDA Bank</span>
+                                <span class="custom-option" data-value="BRED">BRED Bank</span>
+                                <span class="custom-option" data-value="FTB">FTB Bank</span>
+                                <span class="custom-option" data-value="CANADIA">Canadia Bank</span>
+                            </div>
                         </div>
                     </div>
+                    <input type="hidden" name="bank" id="bank_input" value="Auto-Detect">
                 </div>
-                <input type="hidden" name="bank" id="bank_input" value="Auto-Detect">
-            </div>
-            
-            <div class="form-group">
-                <label>Upload PDF Statements</label>
+
+                <!-- Expansive Drag and Drop Area -->
                 <div class="drop-zone" id="dropZone">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    <div class="drop-zone-text">Drag & Drop PDFs here</div>
-                    <div class="drop-zone-subtext">or click to browse files</div>
+                    <div class="drop-icon-aura">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </div>
+                    <p class="drop-title">Drag & Drop Bank Statements</p>
+                    <p class="drop-subtitle">or click anywhere to select PDF files from your computer</p>
+                    <div class="drop-supported-tags">
+                        <span class="bank-badge">ABA Bank</span>
+                        <span class="bank-badge">ACLEDA</span>
+                        <span class="bank-badge">BRED Bank</span>
+                        <span class="bank-badge">FTB</span>
+                        <span class="bank-badge">Canadia</span>
+                    </div>
                     <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" multiple>
                 </div>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.45rem; margin: 0;">
-                        <input type="checkbox" name="include_summary" id="include_summary" style="width: 1rem; height: 1rem; cursor: pointer;">
-                        <label for="include_summary" style="margin: 0; cursor: pointer;">Include Summary</label>
-                    </div>
-                    
-                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.45rem; margin: 0;">
-                        <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else %}disabled{% endif %} style="width: 1rem; height: 1rem; cursor: pointer;">
-                        <label for="use_ocr" style="margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;" title="{% if ocr_available %}High-precision surgical OCR reconstructs Khmer font ligatures and complex vowels{% else %}Tesseract OCR is not installed on this system{% endif %}">
-                            Khmer OCR
-                            <span style="font-size: 0.68rem; font-weight: 600; padding: 2px 6px; border-radius: 9999px; background: {% if ocr_available %}rgba(16, 185, 129, 0.15); color: #059669;{% else %}rgba(148, 163, 184, 0.2); color: #94a3b8;{% endif %}">
-                                {% if ocr_available %}Active{% else %}Unavailable{% endif %}
+
+                <!-- Settings Controls -->
+                <div class="options-grid">
+                    <div class="option-row">
+                        <label class="switch-label-wrap" for="use_ocr" title="Reconstruct complex Khmer font ligatures and sub-vowels with OCR">
+                            <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else %}disabled{% endif %}>
+                            <span class="switch-title">
+                                Khmer Ligature OCR
+                                <span class="pill-badge {% if ocr_available %}pill-active{% else %}pill-disabled{% endif %}">
+                                    {% if ocr_available %}Active{% else %}Unavailable{% endif %}
+                                </span>
                             </span>
                         </label>
-                    </div>
-                </div>
-                
-                <div class="form-group radio-group" style="margin: 0;">
-                    <div style="display: flex; gap: 0.85rem;">
-                        <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                            <input type="radio" name="export_format" value="csv" checked style="width: 1rem; height: 1rem; cursor: pointer;"> CSV
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                            <input type="radio" name="export_format" value="excel" style="width: 1rem; height: 1rem; cursor: pointer;"> Excel
+
+                        <label class="switch-label-wrap" for="include_summary">
+                            <input type="checkbox" name="include_summary" id="include_summary">
+                            <span class="switch-title">Include Balance Summary</span>
                         </label>
                     </div>
-                </div>
-            </div>
 
-            <!-- Integrated Batch Queue inside Card -->
-            <div class="queue-container" id="queueContainer">
-                <div class="queue-header">
-                    <h2 id="queueTitle">Batch Queue</h2>
-                    <button type="button" class="zip-btn" id="zipBtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        Download All (.zip)
-                    </button>
+                    <div class="option-row" style="margin-top:0.35rem; border-top:1px dashed var(--card-border); padding-top:0.75rem;">
+                        <span class="control-label" style="margin:0;">Export Format:</span>
+                        <div class="segmented-control">
+                            <button type="button" class="segment-btn active" data-format="csv" id="formatCsvBtn">
+                                CSV
+                            </button>
+                            <button type="button" class="segment-btn" data-format="excel" id="formatExcelBtn">
+                                Excel (.xlsx)
+                            </button>
+                            <input type="hidden" name="export_format" id="export_format_input" value="csv">
+                        </div>
+                    </div>
                 </div>
-                <div class="file-list" id="fileList"></div>
-            </div>
-            
-            <button type="button" id="processBtn" class="main-btn" disabled>Select Files to Convert</button>
+            </section>
 
-            <div class="disclaimer-banner">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-                <span><strong>Notice:</strong> Automated conversion & OCR results should always be verified against official bank statements before final bookkeeping and ledger reconciliation.</span>
-            </div>
+            <!-- Right Panel: Conversion Queue & Audit Ledger -->
+            <section class="hub-panel">
+                <div class="panel-header">
+                    <div class="panel-header-title">
+                        <div class="panel-icon-wrap" style="background:var(--success-bg); color:var(--success);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <h2>Conversion & Audit Ledger</h2>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span class="badge-counter" id="queueBadgeCount">0 files</span>
+                        <button type="button" class="zip-all-btn" id="zipBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download All (.zip)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Queue Area -->
+                <div class="queue-container">
+                    <!-- Empty State Placeholder -->
+                    <div class="empty-queue-state" id="emptyQueueState">
+                        <div class="empty-queue-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                        </div>
+                        <p class="empty-queue-title">No statements in queue</p>
+                        <p class="empty-queue-desc">Select or drop PDF statements on the left to review files, audit balances, and export data.</p>
+                        
+                        <div class="audit-features-list">
+                            <div class="audit-feature-item">
+                                <span class="audit-feature-icon">✓</span>
+                                <span><strong>Mathematical Reconciliation:</strong> Verifies running balance line-by-line.</span>
+                            </div>
+                            <div class="audit-feature-item">
+                                <span class="audit-feature-icon">✓</span>
+                                <span><strong>High-Precision Khmer OCR:</strong> Reconstructs ligature remarks accurately.</span>
+                            </div>
+                            <div class="audit-feature-item">
+                                <span class="audit-feature-icon">✓</span>
+                                <span><strong>Batch Export:</strong> Download individual CSV/Excel or all in one ZIP.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File List (Visible when files added) -->
+                    <div class="file-list" id="fileList" style="display:none;"></div>
+                </div>
+
+                <!-- Primary Convert Action Button -->
+                <button type="button" id="processBtn" class="primary-action-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span id="processBtnText">Select Statements to Begin</span>
+                </button>
+
+                <!-- Professional Disclaimer Banner -->
+                <div class="executive-notice-banner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span><strong>Auditing Notice:</strong> Automated conversion & OCR results should always be verified against official bank statements before final bookkeeping and ledger reconciliation.</span>
+                </div>
+            </section>
         </form>
-    </div>
+    </main>
 
     <script>
-        // Custom Select Logic
-        const customSelect = document.querySelector('.custom-select');
+        // Custom Bank Selector
+        const customSelect = document.getElementById('bankCustomSelect');
         const customOptions = document.querySelectorAll('.custom-option');
         const bankInput = document.getElementById('bank_input');
         const bankDisplay = document.getElementById('bank_display');
@@ -722,16 +1228,16 @@
         });
         
         for (const option of customOptions) {
-            option.addEventListener('click', function() {
+            option.addEventListener('click', function(e) {
+                e.stopPropagation();
                 if (!this.classList.contains('selected')) {
                     const selected = this.parentNode.querySelector('.custom-option.selected');
-                    if (selected) {
-                        selected.classList.remove('selected');
-                    }
+                    if (selected) selected.classList.remove('selected');
                     this.classList.add('selected');
-                    bankDisplay.textContent = this.textContent;
+                    bankDisplay.textContent = this.textContent.split(' (')[0];
                     bankInput.value = this.getAttribute('data-value');
                 }
+                customSelect.classList.remove('open');
             });
         }
         
@@ -741,7 +1247,7 @@
             }
         });
 
-        // Theme Toggle Logic
+        // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
         const moonIcon = document.getElementById('moonIcon');
         const sunIcon = document.getElementById('sunIcon');
@@ -766,31 +1272,53 @@
             }
         });
 
-        // Batch Upload, File Saver, JSZip & Drag/Drop Logic
+        // Segmented Format Toggle
+        const formatCsvBtn = document.getElementById('formatCsvBtn');
+        const formatExcelBtn = document.getElementById('formatExcelBtn');
+        const exportFormatInput = document.getElementById('export_format_input');
+
+        formatCsvBtn.addEventListener('click', () => {
+            formatCsvBtn.classList.add('active');
+            formatExcelBtn.classList.remove('active');
+            exportFormatInput.value = 'csv';
+        });
+
+        formatExcelBtn.addEventListener('click', () => {
+            formatExcelBtn.classList.add('active');
+            formatCsvBtn.classList.remove('active');
+            exportFormatInput.value = 'excel';
+        });
+
+        // Batch Queue & File Upload System
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('pdf_file');
         const fileList = document.getElementById('fileList');
+        const emptyQueueState = document.getElementById('emptyQueueState');
+        const queueBadgeCount = document.getElementById('queueBadgeCount');
         const processBtn = document.getElementById('processBtn');
-        const queueContainer = document.getElementById('queueContainer');
-        const queueTitle = document.getElementById('queueTitle');
+        const processBtnText = document.getElementById('processBtnText');
         const zipBtn = document.getElementById('zipBtn');
-        
+
         let selectedFiles = [];
 
         dropZone.addEventListener('click', () => fileInput.click());
 
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
+        // Support drag over both dropzone and the workspace
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
         });
 
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
         });
 
         dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
             handleFiles(e.dataTransfer.files);
         });
 
@@ -798,16 +1326,20 @@
             handleFiles(e.target.files);
         });
 
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
         window.removeFile = function(id) {
             const idx = selectedFiles.findIndex(f => f.id === id);
             if (idx !== -1) {
                 selectedFiles.splice(idx, 1);
                 renderFileList();
                 updateProcessBtn();
-                if (selectedFiles.length === 0) {
-                    queueContainer.style.display = 'none';
-                    zipBtn.style.display = 'none';
-                }
             }
         };
 
@@ -818,14 +1350,14 @@
                         file: files[i],
                         status: 'pending',
                         id: Math.random().toString(36).substr(2, 9),
+                        sizeStr: formatBytes(files[i].size),
                         blobUrl: null,
                         filename: null,
-                        blob: null
+                        blob: null,
+                        progress: 0,
+                        stage: 'Pending conversion...'
                     });
                 }
-            }
-            if (selectedFiles.length > 0) {
-                queueContainer.style.display = 'block';
             }
             fileInput.value = '';
             renderFileList();
@@ -833,84 +1365,118 @@
         }
 
         function renderFileList() {
+            if (selectedFiles.length === 0) {
+                emptyQueueState.style.display = 'flex';
+                fileList.style.display = 'none';
+                queueBadgeCount.textContent = '0 files';
+                zipBtn.style.display = 'none';
+                return;
+            }
+
+            emptyQueueState.style.display = 'none';
+            fileList.style.display = 'flex';
+            queueBadgeCount.textContent = `${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''}`;
+
             fileList.innerHTML = '';
-            queueTitle.textContent = `Batch Queue (${selectedFiles.length} file${selectedFiles.length > 1 ? 's' : ''})`;
-            
+
             selectedFiles.forEach(f => {
                 const item = document.createElement('div');
-                item.className = `file-item ${f.status === 'processing' ? 'is-processing' : ''}`;
+                item.className = `file-card ${f.status === 'processing' ? 'is-processing' : ''}`;
                 item.id = `file-${f.id}`;
-                
-                let statusClass = `status-${f.status}`;
-                let statusContent = f.status;
-                if(f.status === 'pending') statusContent = 'Pending';
-                if(f.status === 'processing') statusContent = `<span class="spinner-sm"></span> ${Math.round(f.progress || 6)}%`;
-                if(f.status === 'success') statusContent = 'Done';
-                if(f.status === 'error') statusContent = 'Failed';
 
-                const isProcessing = f.status === 'processing';
-                const progressPct = f.progress || 0;
-                const stageText = f.stage || 'Scanning PDF pages...';
+                let badgeHtml = '';
+                if (f.status === 'pending') {
+                    badgeHtml = `<span class="status-badge badge-pending">Pending</span>`;
+                } else if (f.status === 'processing') {
+                    badgeHtml = `<span class="status-badge badge-processing"><span class="spinner-accent"></span> ${Math.round(f.progress || 6)}%</span>`;
+                } else if (f.status === 'success') {
+                    badgeHtml = `<span class="status-badge badge-done">✓ Done</span>`;
+                } else if (f.status === 'error') {
+                    badgeHtml = `<span class="status-badge badge-error">Failed</span>`;
+                }
 
-                let subtitleHtml = '';
-                if (isProcessing) {
-                    subtitleHtml = `<div class="file-stage-text" id="prog-stage-${f.id}">${stageText}</div>`;
+                let subtextHtml = '';
+                if (f.status === 'processing') {
+                    subtextHtml = `<div class="file-stage-text" id="prog-stage-${f.id}"><span>•</span> ${f.stage || 'Processing...'}</div>`;
                 } else if (f.status === 'success' && f.reconStatus) {
                     const isDiscrepancy = f.reconStatus.includes('Discrepanc');
                     const icon = isDiscrepancy ? '⚠️' : '✓';
-                    const discClass = isDiscrepancy ? 'has-discrepancy' : '';
-                    subtitleHtml = `<div class="file-audit-meta ${discClass}">${icon} ${f.reconStatus}</div>`;
+                    const discClass = isDiscrepancy ? 'discrepancy' : 'balanced';
+                    subtextHtml = `<div class="audit-status-tag ${discClass}">${icon} ${f.reconStatus}</div>`;
+                } else {
+                    subtextHtml = `<span class="file-size-tag">${f.sizeStr}</span>`;
                 }
 
                 item.innerHTML = `
-                    <div class="file-item-left" style="flex:1; min-width:0;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:2px;">
-                            <div class="file-item-name" title="${f.file.name}">${f.file.name}</div>
-                            <div id="prog-stage-${f.id}" style="${subtitleHtml ? 'display:block;' : 'display:none;'}">${subtitleHtml}</div>
+                    <div class="file-card-left">
+                        <div class="file-icon-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <div class="file-details">
+                            <div class="file-title-row">
+                                <span class="file-name" title="${f.file.name}">${f.file.name}</span>
+                            </div>
+                            <div id="subtext-${f.id}">${subtextHtml}</div>
                         </div>
                     </div>
-                    <div class="file-item-right" style="flex-shrink:0;">
-                        <span class="file-item-status ${statusClass}" id="status-badge-${f.id}">${statusContent}</span>
+
+                    <div class="file-card-right">
+                        <div id="badge-wrap-${f.id}">${badgeHtml}</div>
+                        
                         ${f.status === 'pending' ? `
-                        <button type="button" class="remove-btn" onclick="removeFile('${f.id}')" title="Remove file">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        <button type="button" class="card-icon-btn" onclick="removeFile('${f.id}')" title="Remove statement">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>` : ''}
-                        <button type="button" class="dl-icon-btn" id="dl-${f.id}" title="Download" ${f.status === 'success' ? 'style="display:flex;"' : 'style="display:none;"'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        </button>
+
+                        ${f.status === 'success' ? `
+                        <button type="button" class="dl-card-btn" id="dl-${f.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Export
+                        </button>` : ''}
                     </div>
-                    <div class="file-bottom-progress" id="prog-bar-${f.id}" style="width: ${progressPct}%; ${isProcessing ? 'display:block;' : 'display:none;'}"></div>
+
+                    <div class="file-card-progress" id="prog-bar-${f.id}" style="width: ${f.progress || 0}%; ${f.status === 'processing' ? 'display:block;' : 'display:none;'}"></div>
                 `;
+
                 fileList.appendChild(item);
 
                 if (f.status === 'success' && f.blobUrl) {
                     const dlBtn = document.getElementById(`dl-${f.id}`);
-                    dlBtn.addEventListener('click', () => {
-                        const a = document.createElement('a');
-                        a.href = f.blobUrl;
-                        a.download = f.filename;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    });
+                    if (dlBtn) {
+                        dlBtn.addEventListener('click', () => {
+                            const a = document.createElement('a');
+                            a.href = f.blobUrl;
+                            a.download = f.filename;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                        });
+                    }
                 }
             });
+
+            // Toggle ZIP button
+            const successCount = selectedFiles.filter(f => f.status === 'success').length;
+            if (successCount > 1) {
+                zipBtn.style.display = 'inline-flex';
+            } else {
+                zipBtn.style.display = 'none';
+            }
         }
 
         function updateProcessBtn() {
             const pendingCount = selectedFiles.filter(f => f.status === 'pending').length;
+            const successCount = selectedFiles.filter(f => f.status === 'success').length;
+
             if (pendingCount > 0) {
                 processBtn.disabled = false;
-                processBtn.textContent = `Process ${pendingCount} File${pendingCount > 1 ? 's' : ''}`;
+                processBtnText.textContent = `Convert ${pendingCount} Statement${pendingCount > 1 ? 's' : ''}`;
+            } else if (successCount > 0) {
+                processBtn.disabled = true;
+                processBtnText.textContent = `All Statements Converted (${successCount})`;
             } else {
                 processBtn.disabled = true;
-                const successCount = selectedFiles.filter(f => f.status === 'success').length;
-                if (successCount > 0) {
-                    processBtn.textContent = 'All Converted!';
-                } else {
-                    processBtn.textContent = 'Select Files to Convert';
-                }
+                processBtnText.textContent = 'Select Statements to Begin';
             }
         }
 
@@ -926,7 +1492,7 @@
             const includeSummary = document.getElementById('include_summary').checked ? 'on' : 'off';
             const ocrCheckbox = document.getElementById('use_ocr');
             const useOcr = (ocrCheckbox && ocrCheckbox.checked) ? 'on' : 'off';
-            const exportFormat = document.querySelector('input[name="export_format"]:checked').value;
+            const exportFormat = document.getElementById('export_format_input').value;
 
             for (let i = 0; i < pendingFiles.length; i++) {
                 let f = pendingFiles[i];
@@ -935,20 +1501,16 @@
                 f.stage = 'Scanning PDF pages...';
                 renderFileList();
 
-                if (pendingFiles.length === 1) {
-                    processBtn.innerHTML = `<span class="btn-spinner"></span> Converting...`;
-                } else {
-                    processBtn.innerHTML = `<span class="btn-spinner"></span> Converting ${i + 1} of ${pendingFiles.length}...`;
-                }
+                processBtn.innerHTML = `<span class="spinner-ring"></span> <span>Converting ${i + 1} of ${pendingFiles.length}...</span>`;
 
-                // Live progress simulator (smooth crawl through extraction stages)
+                // Live progress simulator
                 let currentPct = 6;
                 const stages = [
                     { at: 15, text: 'Scanning PDF pages...' },
                     { at: 35, text: 'Parsing statement tables...' },
                     { at: 60, text: 'Extracting amounts & dates...' },
                     { at: 78, text: 'Normalizing Khmer remarks...' },
-                    { at: 90, text: 'Generating Excel workbook...' }
+                    { at: 90, text: 'Reconciling ledger balance...' }
                 ];
 
                 const progInterval = setInterval(() => {
@@ -958,18 +1520,15 @@
                         f.progress = Math.min(94, currentPct);
 
                         for (let s of stages) {
-                            if (currentPct >= s.at) {
-                                f.stage = s.text;
-                            }
+                            if (currentPct >= s.at) f.stage = s.text;
                         }
 
-                        // Direct DOM updates for butter-smooth visual feedback
                         const bar = document.getElementById(`prog-bar-${f.id}`);
                         const stage = document.getElementById(`prog-stage-${f.id}`);
-                        const badge = document.getElementById(`status-badge-${f.id}`);
+                        const badgeWrap = document.getElementById(`badge-wrap-${f.id}`);
                         if (bar) bar.style.width = `${f.progress}%`;
-                        if (stage) stage.textContent = f.stage;
-                        if (badge) badge.innerHTML = `<span class="spinner-sm"></span> ${Math.round(f.progress)}%`;
+                        if (stage) stage.innerHTML = `<span>•</span> ${f.stage}`;
+                        if (badgeWrap) badgeWrap.innerHTML = `<span class="status-badge badge-processing"><span class="spinner-accent"></span> ${Math.round(f.progress)}%</span>`;
                     }
                 }, 180);
 
@@ -995,15 +1554,6 @@
                     if (response.ok) {
                         f.progress = 100;
                         f.stage = 'Completed!';
-                        const bar = document.getElementById(`prog-bar-${f.id}`);
-                        const stage = document.getElementById(`prog-stage-${f.id}`);
-                        const badge = document.getElementById(`status-badge-${f.id}`);
-                        if (bar) {
-                            bar.style.width = '100%';
-                            bar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-                        }
-                        if (stage) stage.textContent = 'Completed!';
-                        if (badge) badge.innerHTML = `<span class="spinner-sm"></span> 100%`;
 
                         const reconStatus = response.headers.get('X-Reconciliation-Status');
                         const txCount = response.headers.get('X-Transactions-Count');
@@ -1012,8 +1562,7 @@
                             f.txCount = txCount;
                         }
 
-                        // Short pause so user sees 100% completion
-                        await new Promise(r => setTimeout(r, 220));
+                        await new Promise(r => setTimeout(r, 200));
 
                         const blob = await response.blob();
                         const downloadUrl = window.URL.createObjectURL(blob);
@@ -1027,7 +1576,7 @@
                                 filename = matches[1].replace(/['"]/g, '');
                             }
                         }
-                        
+
                         f.blobUrl = downloadUrl;
                         f.filename = filename;
                         f.blob = blob;
@@ -1042,19 +1591,22 @@
                 }
                 renderFileList();
             }
-            processBtn.innerHTML = 'All Converted!';
+
+            processBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>All Statements Converted!</span>
+            `;
             setTimeout(() => {
                 updateProcessBtn();
             }, 1200);
 
-            // Check if we need to show the ZIP button
             const successes = selectedFiles.filter(f => f.status === 'success');
             if (successes.length > 1) {
-                zipBtn.style.display = 'flex';
+                zipBtn.style.display = 'inline-flex';
             }
         });
 
-        // Generate ZIP
+        // Generate Combined ZIP
         zipBtn.addEventListener('click', () => {
             const successes = selectedFiles.filter(f => f.status === 'success');
             if (successes.length === 0) return;
@@ -1066,10 +1618,10 @@
             
             zipBtn.disabled = true;
             const originalText = zipBtn.innerHTML;
-            zipBtn.innerHTML = 'Zipping...';
+            zipBtn.innerHTML = '<span class="spinner-ring"></span> Zipping...';
             
             zip.generateAsync({type:"blob"}).then(function(content) {
-                saveAs(content, "bank_statements.zip");
+                saveAs(content, "CBVH_Bank_Statements.zip");
                 zipBtn.disabled = false;
                 zipBtn.innerHTML = originalText;
             });
