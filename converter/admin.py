@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import ConversionLog
 
 @admin.register(ConversionLog)
@@ -40,7 +41,7 @@ class ConversionLogAdmin(admin.ModelAdmin):
 
     def user_display(self, obj):
         if not obj.user:
-            return format_html('<span style="color:#94a3b8;">(Anonymous)</span>')
+            return mark_safe('<span style="color:#94a3b8;">(Anonymous)</span>')
         full_name = obj.user.get_full_name()
         if full_name:
             return f"{obj.user.username} ({full_name})"
@@ -88,10 +89,10 @@ class ConversionLogAdmin(admin.ModelAdmin):
 
     def status_badge(self, obj):
         if obj.is_successful:
-            return format_html(
+            return mark_safe(
                 '<span style="background:#10b981; color:#fff; font-weight:700; padding:3px 8px; border-radius:6px; font-size:0.7rem; letter-spacing:0.5px;">SUCCESS</span>'
             )
-        return format_html(
+        return mark_safe(
             '<span style="background:#ef4444; color:#fff; font-weight:700; padding:3px 8px; border-radius:6px; font-size:0.7rem; letter-spacing:0.5px;">FAILED</span>'
         )
     status_badge.short_description = "Status"
