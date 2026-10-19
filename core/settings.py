@@ -142,8 +142,10 @@ AUTHENTICATION_BACKENDS = (
 
 # 2. LDAP Server settings (Update these with your real AD details)
 import ssl
-LDAP_AUTH_URL = "ldap://192.168.11.101:389"
-LDAP_AUTH_USE_TLS = False  # The .101 server allows simple LDAP connections!
+LDAP_AUTH_URL = "ldaps://192.168.11.101:636"
+LDAP_AUTH_CONNECT_USE_SSL = True
+LDAP_AUTH_USE_TLS = False  # Native LDAPS on port 636
+LDAP_AUTH_TLS_ARGS = {"validate": ssl.CERT_NONE}
 
 # 3. Active Directory Search Base (e.g. ou=Users,dc=yourdomain,dc=com)
 LDAP_AUTH_SEARCH_BASE = "DC=cbvh66,DC=com"
