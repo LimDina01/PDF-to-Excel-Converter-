@@ -27,3 +27,4 @@ test_ldap*.py
 test_101.py
 test_both.py
 test_django_auth.py
+ldap_debug_log.txt

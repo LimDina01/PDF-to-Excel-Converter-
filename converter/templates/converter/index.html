@@ -48,7 +48,7 @@
 
         body {
             margin: 0;
-            padding: 120px 1rem 4rem 1rem;
+            padding: 68px 1rem 1.25rem 1rem;
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
             background: var(--bg-color);
@@ -66,7 +66,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 1.5rem 2rem;
+            padding: 0.65rem 1.5rem;
             box-sizing: border-box;
             display: flex;
             justify-content: space-between;
@@ -77,12 +77,12 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 1rem;
-            max-height: 100px;
+            top: 0.5rem;
+            max-height: 52px;
         }
 
         .user-greeting {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             color: var(--label-color);
             font-weight: 500;
         }
@@ -90,16 +90,16 @@
         .logout-btn {
             background: var(--card-bg);
             border: 1px solid var(--input-border);
-            padding: 0.5rem 1rem;
+            padding: 0.45rem 0.85rem;
             border-radius: 8px;
             color: var(--text-color);
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.45rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             font-family: 'Outfit', sans-serif;
         }
@@ -117,7 +117,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
+            padding: 0.45rem;
             border-radius: 50%;
             transition: all 0.2s ease;
         }
@@ -130,13 +130,13 @@
 
         .header {
             text-align: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.35rem;
             margin-top: 0;
         }
         
         h1 {
             margin: 0;
-            font-size: 1.7rem;
+            font-size: 1.45rem;
             font-weight: 700;
             color: var(--label-color);
             letter-spacing: -0.5px;
@@ -146,20 +146,20 @@
             background: var(--card-bg);
             border: 1px solid var(--input-border);
             border-radius: var(--border-radius);
-            padding: 1.5rem 2rem;
+            padding: 1.15rem 1.5rem;
             width: 100%;
-            max-width: 550px;
+            max-width: 560px;
             box-shadow: var(--card-shadow);
             box-sizing: border-box;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.75rem;
             transition: all 0.3s ease;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
-            margin-bottom: 0.75rem;
+            gap: 0.25rem;
+            margin-bottom: 0.55rem;
         }
 
         label {
@@ -263,8 +263,8 @@
         /* Drag and Drop Zone */
         .drop-zone {
             border: 2px dashed var(--input-border);
-            border-radius: 12px;
-            padding: 1.5rem 1rem;
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
             text-align: center;
             cursor: pointer;
             background: var(--btn-bg);
@@ -272,26 +272,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.15rem;
         }
         .drop-zone:hover, .drop-zone.dragover {
             border-color: var(--accent);
             background: rgba(59, 130, 246, 0.05);
         }
         .drop-zone svg {
-            width: 36px;
-            height: 36px;
+            width: 28px;
+            height: 28px;
             color: var(--accent);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.15rem;
         }
         .drop-zone-text {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.92rem;
             color: var(--text-color);
         }
         .drop-zone-subtext {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         #pdf_file {
             display: none;
@@ -302,20 +302,21 @@
             color: var(--text-color);
             cursor: pointer;
             font-weight: 500;
+            font-size: 0.86rem;
         }
         
         .main-btn {
-            padding: 0.75rem;
+            padding: 0.65rem;
             border-radius: 8px;
             background: var(--accent);
             color: white;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             border: none;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
-            margin-top: 0.5rem;
+            margin-top: 0.65rem;
             font-family: 'Outfit', sans-serif;
             box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
         }
@@ -330,28 +331,28 @@
             box-shadow: none;
         }
 
-        /* Queue Container (Full Width Design) */
+        /* Integrated Queue Container */
         .queue-container {
             width: 100%;
-            max-width: 800px;
             display: none;
-            margin-bottom: 2rem;
-            animation: fadeIn 0.3s ease;
+            margin-top: 0.65rem;
+            margin-bottom: 0.25rem;
+            animation: fadeIn 0.25s ease;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-6px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .queue-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding: 0 0.5rem;
+            margin-bottom: 0.35rem;
+            padding: 0 0.15rem;
         }
         .queue-header h2 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--label-color);
         }
@@ -359,16 +360,17 @@
             background: var(--success);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.3rem 0.65rem;
             border-radius: 6px;
             font-weight: 600;
+            font-size: 0.78rem;
             font-family: 'Outfit', sans-serif;
             cursor: pointer;
             display: none;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.35rem;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 2px 4px -1px rgba(16, 185, 129, 0.25);
         }
         .zip-btn:hover {
             background: #059669;
@@ -378,38 +380,51 @@
         .file-list {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 2px;
         }
+        .file-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .file-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .file-list::-webkit-scrollbar-thumb {
+            background: var(--btn-border);
+            border-radius: 4px;
+        }
+
         .file-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.9rem 1.25rem;
-            min-height: 64px;
+            padding: 0.55rem 0.8rem;
+            min-height: 50px;
             box-sizing: border-box;
-            background: var(--card-bg);
+            background: var(--btn-bg);
             border: 1px solid var(--input-border);
-            border-radius: 12px;
-            font-size: 0.95rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
         }
         .file-item:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
             border-color: var(--accent);
         }
         .file-item-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.65rem;
             overflow: hidden;
         }
         .file-item-right {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.4rem;
         }
         .file-item-name {
             font-weight: 500;
@@ -417,31 +432,32 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 400px;
+            max-width: 250px;
+            font-size: 0.84rem;
         }
         .file-item-status {
             font-weight: 700;
-            font-size: 0.75rem;
-            padding: 0.35rem 0.65rem;
-            border-radius: 6px;
+            font-size: 0.72rem;
+            padding: 0.25rem 0.55rem;
+            border-radius: 5px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.45rem;
-            min-width: 76px;
+            gap: 0.35rem;
+            min-width: 68px;
             text-align: center;
         }
-        .status-pending { background: var(--btn-bg); color: var(--text-muted); }
+        .status-pending { background: var(--card-bg); border: 1px solid var(--input-border); color: var(--text-muted); }
         .status-processing { background: rgba(59, 130, 246, 0.12); color: var(--accent); }
         .status-success { background: rgba(16, 185, 129, 0.12); color: var(--success); }
         .status-error { background: rgba(239, 68, 68, 0.12); color: var(--error); }
         
         .file-item.is-processing {
             border-color: var(--accent);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.12);
-            background: linear-gradient(90deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.04) 50%, var(--card-bg) 100%);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+            background: linear-gradient(90deg, var(--btn-bg) 0%, rgba(59, 130, 246, 0.08) 50%, var(--btn-bg) 100%);
             background-size: 200% 100%;
             animation: cardShimmer 2.5s infinite ease-in-out;
         }
@@ -516,20 +532,67 @@
             to { transform: rotate(360deg); }
         }
 
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.3rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .remove-btn:hover {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
         .dl-icon-btn {
             background: none;
             border: none;
             color: var(--accent);
             cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 6px;
+            padding: 0.3rem;
+            border-radius: 5px;
             display: none;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
         }
         .dl-icon-btn:hover {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .disclaimer-banner {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: #b45309;
+            padding: 0.45rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            line-height: 1.35;
+            margin-top: 0.65rem;
+        }
+        body.dark-mode .disclaimer-banner {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+        .file-audit-meta {
+            font-size: 0.76rem;
+            color: var(--success);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+        }
+        .file-audit-meta.has-discrepancy {
+            color: #f59e0b;
         }
     </style>
 </head>
@@ -592,18 +655,18 @@
                 </div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.75rem;">
-                <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
-                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.5rem; margin: 0;">
-                        <input type="checkbox" name="include_summary" id="include_summary" style="width: 1.1rem; height: 1.1rem; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.45rem; margin: 0;">
+                        <input type="checkbox" name="include_summary" id="include_summary" style="width: 1rem; height: 1rem; cursor: pointer;">
                         <label for="include_summary" style="margin: 0; cursor: pointer;">Include Summary</label>
                     </div>
                     
-                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.5rem; margin: 0;">
-                        <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else %}disabled{% endif %} style="width: 1.1rem; height: 1.1rem; cursor: pointer;">
-                        <label for="use_ocr" style="margin: 0; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="{% if ocr_available %}High-precision surgical OCR reconstructs Khmer font ligatures and complex vowels{% else %}Tesseract OCR is not installed on this system{% endif %}">
+                    <div class="form-group checkbox-group" style="flex-direction: row; align-items: center; gap: 0.45rem; margin: 0;">
+                        <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else %}disabled{% endif %} style="width: 1rem; height: 1rem; cursor: pointer;">
+                        <label for="use_ocr" style="margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;" title="{% if ocr_available %}High-precision surgical OCR reconstructs Khmer font ligatures and complex vowels{% else %}Tesseract OCR is not installed on this system{% endif %}">
                             Khmer OCR
-                            <span style="font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 9999px; background: {% if ocr_available %}rgba(16, 185, 129, 0.15); color: #059669;{% else %}rgba(148, 163, 184, 0.2); color: #94a3b8;{% endif %}">
+                            <span style="font-size: 0.68rem; font-weight: 600; padding: 2px 6px; border-radius: 9999px; background: {% if ocr_available %}rgba(16, 185, 129, 0.15); color: #059669;{% else %}rgba(148, 163, 184, 0.2); color: #94a3b8;{% endif %}">
                                 {% if ocr_available %}Active{% else %}Unavailable{% endif %}
                             </span>
                         </label>
@@ -611,31 +674,40 @@
                 </div>
                 
                 <div class="form-group radio-group" style="margin: 0;">
-                    <div style="display: flex; gap: 1rem;">
+                    <div style="display: flex; gap: 0.85rem;">
                         <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                            <input type="radio" name="export_format" value="csv" checked style="width: 1.1rem; height: 1.1rem; cursor: pointer;"> CSV
+                            <input type="radio" name="export_format" value="csv" checked style="width: 1rem; height: 1rem; cursor: pointer;"> CSV
                         </label>
                         <label style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer;">
-                            <input type="radio" name="export_format" value="excel" style="width: 1.1rem; height: 1.1rem; cursor: pointer;"> Excel
+                            <input type="radio" name="export_format" value="excel" style="width: 1rem; height: 1rem; cursor: pointer;"> Excel
                         </label>
                     </div>
                 </div>
             </div>
+
+            <!-- Integrated Batch Queue inside Card -->
+            <div class="queue-container" id="queueContainer">
+                <div class="queue-header">
+                    <h2 id="queueTitle">Batch Queue</h2>
+                    <button type="button" class="zip-btn" id="zipBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download All (.zip)
+                    </button>
+                </div>
+                <div class="file-list" id="fileList"></div>
+            </div>
             
             <button type="button" id="processBtn" class="main-btn" disabled>Select Files to Convert</button>
-        </form>
-    </div>
 
-    <!-- The unbounded Queue Container below the main form -->
-    <div class="queue-container" id="queueContainer">
-        <div class="queue-header">
-            <h2 id="queueTitle">Batch Queue</h2>
-            <button type="button" class="zip-btn" id="zipBtn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                Download All (.zip)
-            </button>
-        </div>
-        <div class="file-list" id="fileList"></div>
+            <div class="disclaimer-banner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span><strong>Notice:</strong> Automated conversion & OCR results should always be verified against official bank statements before final bookkeeping and ledger reconciliation.</span>
+            </div>
+        </form>
     </div>
 
     <script>
@@ -726,6 +798,19 @@
             handleFiles(e.target.files);
         });
 
+        window.removeFile = function(id) {
+            const idx = selectedFiles.findIndex(f => f.id === id);
+            if (idx !== -1) {
+                selectedFiles.splice(idx, 1);
+                renderFileList();
+                updateProcessBtn();
+                if (selectedFiles.length === 0) {
+                    queueContainer.style.display = 'none';
+                    zipBtn.style.display = 'none';
+                }
+            }
+        };
+
         function handleFiles(files) {
             for (let i = 0; i < files.length; i++) {
                 if (files[i].name.toLowerCase().endsWith('.pdf')) {
@@ -742,6 +827,7 @@
             if (selectedFiles.length > 0) {
                 queueContainer.style.display = 'block';
             }
+            fileInput.value = '';
             renderFileList();
             updateProcessBtn();
         }
@@ -766,18 +852,32 @@
                 const progressPct = f.progress || 0;
                 const stageText = f.stage || 'Scanning PDF pages...';
 
+                let subtitleHtml = '';
+                if (isProcessing) {
+                    subtitleHtml = `<div class="file-stage-text" id="prog-stage-${f.id}">${stageText}</div>`;
+                } else if (f.status === 'success' && f.reconStatus) {
+                    const isDiscrepancy = f.reconStatus.includes('Discrepanc');
+                    const icon = isDiscrepancy ? '⚠️' : '✓';
+                    const discClass = isDiscrepancy ? 'has-discrepancy' : '';
+                    subtitleHtml = `<div class="file-audit-meta ${discClass}">${icon} ${f.reconStatus}</div>`;
+                }
+
                 item.innerHTML = `
                     <div class="file-item-left" style="flex:1; min-width:0;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:3px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:2px;">
                             <div class="file-item-name" title="${f.file.name}">${f.file.name}</div>
-                            <div class="file-stage-text" id="prog-stage-${f.id}" style="${isProcessing ? 'display:inline-flex;' : 'display:none;'}">${stageText}</div>
+                            <div id="prog-stage-${f.id}" style="${subtitleHtml ? 'display:block;' : 'display:none;'}">${subtitleHtml}</div>
                         </div>
                     </div>
                     <div class="file-item-right" style="flex-shrink:0;">
                         <span class="file-item-status ${statusClass}" id="status-badge-${f.id}">${statusContent}</span>
+                        ${f.status === 'pending' ? `
+                        <button type="button" class="remove-btn" onclick="removeFile('${f.id}')" title="Remove file">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>` : ''}
                         <button type="button" class="dl-icon-btn" id="dl-${f.id}" title="Download" ${f.status === 'success' ? 'style="display:flex;"' : 'style="display:none;"'}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         </button>
                     </div>
                     <div class="file-bottom-progress" id="prog-bar-${f.id}" style="width: ${progressPct}%; ${isProcessing ? 'display:block;' : 'display:none;'}"></div>
@@ -805,7 +905,12 @@
                 processBtn.textContent = `Process ${pendingCount} File${pendingCount > 1 ? 's' : ''}`;
             } else {
                 processBtn.disabled = true;
-                processBtn.textContent = 'Select Files to Convert';
+                const successCount = selectedFiles.filter(f => f.status === 'success').length;
+                if (successCount > 0) {
+                    processBtn.textContent = 'All Converted!';
+                } else {
+                    processBtn.textContent = 'Select Files to Convert';
+                }
             }
         }
 
@@ -899,6 +1004,13 @@
                         }
                         if (stage) stage.textContent = 'Completed!';
                         if (badge) badge.innerHTML = `<span class="spinner-sm"></span> 100%`;
+
+                        const reconStatus = response.headers.get('X-Reconciliation-Status');
+                        const txCount = response.headers.get('X-Transactions-Count');
+                        if (reconStatus) {
+                            f.reconStatus = reconStatus;
+                            f.txCount = txCount;
+                        }
 
                         // Short pause so user sees 100% completion
                         await new Promise(r => setTimeout(r, 220));
