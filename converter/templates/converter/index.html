@@ -384,13 +384,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.25rem;
+            padding: 0.9rem 1.25rem;
+            min-height: 64px;
+            box-sizing: border-box;
             background: var(--card-bg);
             border: 1px solid var(--input-border);
             border-radius: 12px;
             font-size: 0.95rem;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
         .file-item:hover {
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
@@ -418,16 +422,100 @@
         .file-item-status {
             font-weight: 700;
             font-size: 0.75rem;
-            padding: 0.35rem 0.6rem;
+            padding: 0.35rem 0.65rem;
             border-radius: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            min-width: 76px;
+            text-align: center;
         }
         .status-pending { background: var(--btn-bg); color: var(--text-muted); }
-        .status-processing { background: rgba(59, 130, 246, 0.1); color: var(--accent); }
-        .status-success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .status-error { background: rgba(239, 68, 68, 0.1); color: var(--error); }
+        .status-processing { background: rgba(59, 130, 246, 0.12); color: var(--accent); }
+        .status-success { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+        .status-error { background: rgba(239, 68, 68, 0.12); color: var(--error); }
         
+        .file-item.is-processing {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.12);
+            background: linear-gradient(90deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.04) 50%, var(--card-bg) 100%);
+            background-size: 200% 100%;
+            animation: cardShimmer 2.5s infinite ease-in-out;
+        }
+
+        @keyframes cardShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .file-bottom-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #38bdf8);
+            box-shadow: 0 -1px 6px rgba(59, 130, 246, 0.4);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+
+        .file-stage-text {
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.2;
+        }
+
+        .file-stage-text::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulseDot 1s infinite alternate;
+            flex-shrink: 0;
+        }
+
+        @keyframes pulseDot {
+            0% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .spinner-sm {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(59, 130, 246, 0.25);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .btn-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
         .dl-icon-btn {
             background: none;
             border: none;
@@ -664,27 +752,35 @@
             
             selectedFiles.forEach(f => {
                 const item = document.createElement('div');
-                item.className = 'file-item';
+                item.className = `file-item ${f.status === 'processing' ? 'is-processing' : ''}`;
                 item.id = `file-${f.id}`;
                 
                 let statusClass = `status-${f.status}`;
-                let statusText = f.status;
-                if(f.status === 'pending') statusText = 'Pending';
-                if(f.status === 'processing') statusText = 'Converting...';
-                if(f.status === 'success') statusText = 'Done';
-                if(f.status === 'error') statusText = 'Failed';
+                let statusContent = f.status;
+                if(f.status === 'pending') statusContent = 'Pending';
+                if(f.status === 'processing') statusContent = `<span class="spinner-sm"></span> ${Math.round(f.progress || 6)}%`;
+                if(f.status === 'success') statusContent = 'Done';
+                if(f.status === 'error') statusContent = 'Failed';
+
+                const isProcessing = f.status === 'processing';
+                const progressPct = f.progress || 0;
+                const stageText = f.stage || 'Scanning PDF pages...';
 
                 item.innerHTML = `
-                    <div class="file-item-left">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        <span class="file-item-name" title="${f.file.name}">${f.file.name}</span>
+                    <div class="file-item-left" style="flex:1; min-width:0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; gap:3px;">
+                            <div class="file-item-name" title="${f.file.name}">${f.file.name}</div>
+                            <div class="file-stage-text" id="prog-stage-${f.id}" style="${isProcessing ? 'display:inline-flex;' : 'display:none;'}">${stageText}</div>
+                        </div>
                     </div>
-                    <div class="file-item-right">
-                        <span class="file-item-status ${statusClass}">${statusText}</span>
+                    <div class="file-item-right" style="flex-shrink:0;">
+                        <span class="file-item-status ${statusClass}" id="status-badge-${f.id}">${statusContent}</span>
                         <button type="button" class="dl-icon-btn" id="dl-${f.id}" title="Download" ${f.status === 'success' ? 'style="display:flex;"' : 'style="display:none;"'}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         </button>
                     </div>
+                    <div class="file-bottom-progress" id="prog-bar-${f.id}" style="width: ${progressPct}%; ${isProcessing ? 'display:block;' : 'display:none;'}"></div>
                 `;
                 fileList.appendChild(item);
 
@@ -718,8 +814,7 @@
             if (pendingFiles.length === 0) return;
 
             processBtn.disabled = true;
-            processBtn.textContent = 'Processing...';
-            zipBtn.style.display = 'none'; // Hide ZIP during process
+            zipBtn.style.display = 'none';
 
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             const bank = document.getElementById('bank_input').value;
@@ -731,7 +826,47 @@
             for (let i = 0; i < pendingFiles.length; i++) {
                 let f = pendingFiles[i];
                 f.status = 'processing';
+                f.progress = 6;
+                f.stage = 'Scanning PDF pages...';
                 renderFileList();
+
+                if (pendingFiles.length === 1) {
+                    processBtn.innerHTML = `<span class="btn-spinner"></span> Converting...`;
+                } else {
+                    processBtn.innerHTML = `<span class="btn-spinner"></span> Converting ${i + 1} of ${pendingFiles.length}...`;
+                }
+
+                // Live progress simulator (smooth crawl through extraction stages)
+                let currentPct = 6;
+                const stages = [
+                    { at: 15, text: 'Scanning PDF pages...' },
+                    { at: 35, text: 'Parsing statement tables...' },
+                    { at: 60, text: 'Extracting amounts & dates...' },
+                    { at: 78, text: 'Normalizing Khmer remarks...' },
+                    { at: 90, text: 'Generating Excel workbook...' }
+                ];
+
+                const progInterval = setInterval(() => {
+                    if (currentPct < 94) {
+                        const step = (95 - currentPct) * 0.08;
+                        currentPct += Math.max(0.6, step);
+                        f.progress = Math.min(94, currentPct);
+
+                        for (let s of stages) {
+                            if (currentPct >= s.at) {
+                                f.stage = s.text;
+                            }
+                        }
+
+                        // Direct DOM updates for butter-smooth visual feedback
+                        const bar = document.getElementById(`prog-bar-${f.id}`);
+                        const stage = document.getElementById(`prog-stage-${f.id}`);
+                        const badge = document.getElementById(`status-badge-${f.id}`);
+                        if (bar) bar.style.width = `${f.progress}%`;
+                        if (stage) stage.textContent = f.stage;
+                        if (badge) badge.innerHTML = `<span class="spinner-sm"></span> ${Math.round(f.progress)}%`;
+                    }
+                }, 180);
 
                 const formData = new FormData();
                 formData.append('csrfmiddlewaretoken', csrfToken);
@@ -750,7 +885,24 @@
                         }
                     });
 
+                    clearInterval(progInterval);
+
                     if (response.ok) {
+                        f.progress = 100;
+                        f.stage = 'Completed!';
+                        const bar = document.getElementById(`prog-bar-${f.id}`);
+                        const stage = document.getElementById(`prog-stage-${f.id}`);
+                        const badge = document.getElementById(`status-badge-${f.id}`);
+                        if (bar) {
+                            bar.style.width = '100%';
+                            bar.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+                        }
+                        if (stage) stage.textContent = 'Completed!';
+                        if (badge) badge.innerHTML = `<span class="spinner-sm"></span> 100%`;
+
+                        // Short pause so user sees 100% completion
+                        await new Promise(r => setTimeout(r, 220));
+
                         const blob = await response.blob();
                         const downloadUrl = window.URL.createObjectURL(blob);
                         
@@ -772,12 +924,16 @@
                         f.status = 'error';
                     }
                 } catch (err) {
+                    clearInterval(progInterval);
                     console.error(err);
                     f.status = 'error';
                 }
                 renderFileList();
             }
-            updateProcessBtn();
+            processBtn.innerHTML = 'All Converted!';
+            setTimeout(() => {
+                updateProcessBtn();
+            }, 1200);
 
             // Check if we need to show the ZIP button
             const successes = selectedFiles.filter(f => f.status === 'success');
