@@ -1,247 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Bank Statement Converter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sign In • Cheang Bak Vanhong Jewelry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f3f6f9;
-            --card-bg: #ffffff;
-            --text-color: #1e293b;
-            --text-muted: #64748b;
-            --input-border: #e2e8f0;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+
+            /* Luxury Light Palette */
+            --bg-base: #f8fafc;
+            --bg-gradient: radial-gradient(circle at 50% 0%, rgba(241, 245, 249, 1) 0%, rgba(248, 250, 252, 1) 85%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-inner-bg: rgba(248, 250, 252, 0.85);
+            --card-border: rgba(226, 232, 240, 0.85);
+            --card-border-glow: rgba(179, 139, 77, 0.25);
+            --card-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.08), 0 10px 20px -5px rgba(15, 23, 42, 0.04);
+
+            --brand-gold: #b38b4d;
+            --brand-gold-hover: #9c753b;
+            --brand-gold-glow: rgba(179, 139, 77, 0.35);
+            --brand-gold-subtle: rgba(179, 139, 77, 0.12);
+            --brand-dark: #0f172a;
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+
             --input-bg: #ffffff;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --label-color: #334155;
-            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            --border-radius: 16px;
+            --input-border: #e2e8f0;
+
+            --success: #059669;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --error: #dc2626;
+            --error-bg: rgba(239, 68, 68, 0.08);
+            --error-border: rgba(239, 68, 68, 0.25);
+
+            --radius-lg: 18px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
         }
 
         body.dark-mode {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
-            --input-border: #334155;
-            --input-bg: #1e293b;
-            --accent: #3b82f6;
-            --accent-hover: #60a5fa;
-            --label-color: #e2e8f0;
-            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            --bg-base: #070b14;
+            --bg-gradient: radial-gradient(ellipse at 50% -10%, #151e33 0%, #070b14 85%);
+            --card-bg: rgba(17, 24, 39, 0.88);
+            --card-inner-bg: rgba(11, 17, 30, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-glow: rgba(197, 160, 89, 0.35);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+
+            --brand-gold: #c5a059;
+            --brand-gold-hover: #d8b26e;
+            --brand-gold-glow: rgba(197, 160, 89, 0.45);
+            --brand-gold-subtle: rgba(197, 160, 89, 0.15);
+
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+
+            --input-bg: rgba(15, 23, 42, 0.7);
+            --input-border: rgba(255, 255, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 2rem 1rem;
-            box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg-color);
-            color: var(--text-color);
+            font-family: var(--font-body);
+            background: var(--bg-base);
+            background-image: var(--bg-gradient);
+            color: var(--text-primary);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s ease;
+            padding: 1.5rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .theme-toggle {
+        /* Ambient Decorative Elements */
+        .ambient-orb {
             position: absolute;
-            top: 1.5rem;
-            right: 2rem;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
+        }
+
+        .ambient-orb-1 {
+            width: 380px;
+            height: 380px;
+            top: -80px;
+            right: 15%;
+            background: radial-gradient(circle, rgba(179, 139, 77, 0.22) 0%, transparent 70%);
+        }
+
+        .ambient-orb-2 {
+            width: 420px;
+            height: 420px;
+            bottom: -100px;
+            left: 12%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 70%);
+        }
+
+        body.dark-mode .ambient-orb-1 {
+            background: radial-gradient(circle, rgba(197, 160, 89, 0.18) 0%, transparent 70%);
+        }
+
+        body.dark-mode .ambient-orb-2 {
+            background: radial-gradient(circle, rgba(30, 58, 138, 0.25) 0%, transparent 70%);
+        }
+
+        /* Top Bar Floating Actions */
+        .top-action-bar {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.5rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .theme-toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--brand-gold);
+            transform: scale(1.05);
+        }
+
+        /* Main Login Card */
+        .login-card-wrapper {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 440px;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-card {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: clamp(2rem, 4vh, 2.75rem) clamp(1.5rem, 3.5vw, 2.5rem);
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        /* Brand Presentation */
+        .brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 1.75rem;
+        }
+
+        .brand-logo-container {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            margin-bottom: 1.15rem;
+            box-shadow: 0 6px 18px rgba(179, 139, 77, 0.12);
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo-container:hover {
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .brand-logo-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-family: var(--font-display);
+            font-size: 1.45rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            line-height: 1.25;
+            margin-bottom: 0.3rem;
+        }
+
+        .brand-subtitle {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            color: var(--brand-gold);
+            margin-bottom: 0.85rem;
+        }
+
+        /* Active Directory SSO Badge */
+        .sso-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.28rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .sso-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
+        }
+
+        /* Error Alert */
+        .alert-box {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            color: var(--error);
+            padding: 0.75rem 0.95rem;
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            line-height: 1.4;
+            margin-bottom: 1.25rem;
+        }
+
+        .alert-box svg {
+            flex-shrink: 0;
+        }
+
+        /* Form Controls */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.15rem;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .field-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .input-icon-left {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 2.75rem 0 2.65rem;
+            border-radius: var(--radius-md);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.22s ease;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-input:focus {
+            border-color: var(--brand-gold);
+            box-shadow: 0 0 0 3px var(--brand-gold-subtle), inset 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-input:focus + .input-icon-left,
+        .input-wrapper:focus-within .input-icon-left {
+            color: var(--brand-gold);
+        }
+
+        /* Password Toggle */
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
             background: none;
             border: none;
-            color: var(--text-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, background 0.2s ease;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode .password-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            height: 46px;
+            margin-top: 0.5rem;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--brand-gold) 0%, #9c753b 100%);
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: all 0.2s ease;
+            gap: 0.55rem;
+            box-shadow: 0 4px 14px var(--brand-gold-glow);
+            transition: all 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
         }
-        .theme-toggle:hover { background: rgba(0, 0, 0, 0.05); }
-        body.dark-mode .theme-toggle:hover { background: rgba(255, 255, 255, 0.1); }
 
-        .header {
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--brand-gold-hover) 0%, #85612c 100%);
+            transform: translateY(-1.5px);
+            box-shadow: 0 6px 20px var(--brand-gold-glow);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0.5px) scale(0.99);
+        }
+
+        /* Footer Security Notice */
+        .login-footer {
+            margin-top: 1.5rem;
             text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .header img {
-            max-height: 100px;
-            margin-bottom: 1rem;
-        }
-        
-        h1 {
-            margin: 0;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--label-color);
-            letter-spacing: -0.5px;
-        }
-
-        .container {
-            background: var(--card-bg);
-            border: 1px solid var(--input-border);
-            border-radius: var(--border-radius);
-            padding: 2.5rem 2rem;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: var(--card-shadow);
-            box-sizing: border-box;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        p.subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
-            margin-top: 0;
-            font-weight: 500;
-        }
-
-        form {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            align-items: center;
+            gap: 0.4rem;
         }
 
-        .input-group {
-            position: relative;
+        .security-notice {
+            font-size: 0.74rem;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
+            gap: 0.35rem;
         }
 
-        .input-group svg {
-            position: absolute;
-            left: 14px;
+        .copyright-tag {
+            font-size: 0.7rem;
             color: var(--text-muted);
-            width: 18px;
-            height: 18px;
-        }
-
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 0.85rem 1rem 0.85rem 2.5rem;
-            border-radius: 8px;
-            background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            color: var(--text-color);
-            font-family: inherit;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        button[type="submit"] {
-            padding: 0.85rem;
-            border-radius: 8px;
-            background: var(--accent);
-            color: white;
-            font-weight: 600;
-            font-size: 1.05rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin-top: 0.5rem;
-            font-family: inherit;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
-        }
-
-        button[type="submit"]:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-        }
-
-        .error {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            padding: 0.85rem;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        
-        body.dark-mode .error {
-            color: #fca5a5;
-            background: rgba(239, 68, 68, 0.15);
-        }
-        
-        .version {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
+            opacity: 0.8;
         }
     </style>
 </head>
-<body>
-    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
-        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-        <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    </button>
 
-    <div class="header">
-        {% load static %}
-        <img src="{% static 'converter/img/logo.png' %}" alt="Logo">
-        <h1>Bank Statement Converter</h1>
+<body>
+    <!-- Ambient Lighting Orbs -->
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
+
+    <!-- Top Action Bar -->
+    <div class="top-action-bar">
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">
+            <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </button>
     </div>
-    
-    <div class="container">
-        <p class="subtitle">Sign in to start your session</p>
-        
-        {% if form.errors %}
-        <div class="error">Your username and password didn't match. Please try again.</div>
-        {% endif %}
-        
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            <div class="input-group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <input type="text" name="username" placeholder="Username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username">
+
+    <!-- Main Login Card Wrapper -->
+    <div class="login-card-wrapper">
+        <div class="login-card">
+            <!-- Brand Header -->
+            <div class="brand-header">
+                {% load static %}
+                <div class="brand-logo-container">
+                    <img src="{% static 'converter/img/logo.png' %}" alt="Cheang Bak Vanhong Jewelry"
+                        class="brand-logo-img">
+                </div>
+                <h1 class="brand-title">Bank Statement Converter</h1>
+                <span class="brand-subtitle">Cheang Bak Vanhong Jewelry</span>
+
+                <div class="sso-badge" title="Connects securely to company Active Directory (cbvh66.com)">
+                    <span class="sso-badge-dot"></span>
+                    <span>cbvh66 Domain Authentication</span>
+                </div>
             </div>
-            
-            <div class="input-group">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <input type="password" name="password" placeholder="Password" autocomplete="current-password" required id="id_password">
+
+            <!-- Error Notice -->
+            {% if form.errors %}
+            <div class="alert-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Incorrect username or password. Please verify your Active Directory credentials.</span>
             </div>
-            
-            <input type="hidden" name="next" value="{{ next }}">
-            <button type="submit">Sign In</button>
-        </form>
+            {% endif %}
+
+            <!-- Form -->
+            <form method="post" action="{% url 'login' %}" class="login-form">
+                {% csrf_token %}
+
+                <!-- Username Field -->
+                <div class="form-field">
+                    <label class="field-label" for="id_username">
+                        <span>Username</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <span class="input-icon-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                        <input type="text" name="username" id="id_username" class="form-input"
+                            placeholder="e.g. dina.lim" autofocus autocapitalize="none" autocomplete="username"
+                            maxlength="150" required>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-field">
+                    <label class="field-label" for="id_password">
+                        <span>Password</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <span class="input-icon-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </span>
+                        <input type="password" name="password" id="id_password" class="form-input"
+                            placeholder="Enter your domain password" autocomplete="current-password" required>
+                        <button type="button" class="password-toggle-btn" id="passwordToggleBtn"
+                            title="Show / hide password" aria-label="Toggle password visibility">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg id="eyeOffIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="17"
+                                height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                </path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10 17 15 12 10 7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    <span>Sign In to Financial Workspace</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Security Footnote -->
+        <div class="login-footer">
+            <div class="security-notice">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Authorized Accounting &amp; Ledger Access Only</span>
+            </div>
+            <div class="copyright-tag">
+                Cheang Bak Vanhong Jewelry • Financial Statement Converter
+            </div>
+        </div>
     </div>
-    
-    <div class="version">1.0.0 Stable</div>
 
     <script>
-        // Theme Toggle Logic
+        // Theme Persistence & Toggle
         const themeToggle = document.getElementById('themeToggle');
         const moonIcon = document.getElementById('moonIcon');
         const sunIcon = document.getElementById('sunIcon');
-        
+
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
             document.body.classList.add('dark-mode');
             moonIcon.style.display = 'none';
             sunIcon.style.display = 'block';
+        } else {
+            document.body.classList.remove('dark-mode');
+            moonIcon.style.display = 'block';
+            sunIcon.style.display = 'none';
         }
-        
+
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
@@ -254,6 +604,20 @@
                 localStorage.setItem('theme', 'light');
             }
         });
+
+        // Password Show/Hide Toggle
+        const passwordInput = document.getElementById('id_password');
+        const passwordToggleBtn = document.getElementById('passwordToggleBtn');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
+
+        passwordToggleBtn.addEventListener('click', () => {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            eyeIcon.style.display = isPassword ? 'none' : 'block';
+            eyeOffIcon.style.display = isPassword ? 'block' : 'none';
+        });
     </script>
 </body>
+
 </html>
