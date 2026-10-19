@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Statement Converter • CBVH</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root {
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            
+
             /* Luxury Palette (Porcelain & Warm Rose-Gold Slate) */
             --bg-page: #f8fafc;
             --bg-radial: radial-gradient(circle at 50% 0%, #fdfbf7 0%, #f1f5f9 100%);
@@ -21,31 +24,31 @@
             --card-border: #e2e8f0;
             --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05), 0 0 1px 1px rgba(0, 0, 0, 0.02);
             --card-inner-bg: #f8fafc;
-            
+
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-muted: #94a3b8;
-            
+
             --brand-gold: #b38b4d;
             --brand-gold-hover: #9c753b;
             --brand-gold-light: rgba(179, 139, 77, 0.12);
             --brand-gold-glow: rgba(179, 139, 77, 0.25);
-            
+
             --accent: #2563eb;
             --accent-hover: #1d4ed8;
             --accent-glow: rgba(37, 99, 235, 0.25);
-            
+
             --success: #10b981;
             --success-bg: rgba(16, 185, 129, 0.1);
             --warning: #f59e0b;
             --warning-bg: rgba(245, 158, 11, 0.1);
             --error: #ef4444;
             --error-bg: rgba(239, 68, 68, 0.1);
-            
+
             --radius-lg: 20px;
             --radius-md: 14px;
             --radius-sm: 8px;
-            --nav-height: 86px;
+            --nav-height: 74px;
         }
 
         body.dark-mode {
@@ -55,16 +58,16 @@
             --card-border: rgba(255, 255, 255, 0.08);
             --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 1px 1px rgba(255, 255, 255, 0.05);
             --card-inner-bg: rgba(15, 23, 42, 0.6);
-            
+
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #64748b;
-            
+
             --brand-gold: #c5a059;
             --brand-gold-hover: #d8b26e;
             --brand-gold-light: rgba(197, 160, 89, 0.15);
             --brand-gold-glow: rgba(197, 160, 89, 0.3);
-            
+
             --accent: #3b82f6;
             --accent-hover: #60a5fa;
             --accent-glow: rgba(59, 130, 246, 0.3);
@@ -100,7 +103,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--card-border);
@@ -108,7 +111,7 @@
         }
 
         body.dark-mode .top-navbar {
-            background: rgba(10, 15, 26, 0.75);
+            background: rgba(10, 15, 26, 0.85);
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
@@ -120,7 +123,7 @@
         }
 
         .brand-logo-img {
-            max-height: 52px;
+            max-height: 50px;
             width: auto;
             object-fit: contain;
             transition: transform 0.25s ease;
@@ -139,7 +142,7 @@
             font-family: var(--font-display);
             font-weight: 700;
             font-size: 1.15rem;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             color: var(--text-primary);
             line-height: 1.2;
         }
@@ -147,7 +150,7 @@
         .brand-subtitle {
             font-size: 0.72rem;
             font-weight: 600;
-            letter-spacing: 1.8px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             color: var(--brand-gold);
         }
@@ -155,18 +158,18 @@
         .nav-right-actions {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .user-pill {
             display: flex;
             align-items: center;
-            gap: 0.55rem;
+            gap: 0.5rem;
             background: var(--card-inner-bg);
             border: 1px solid var(--card-border);
-            padding: 0.45rem 0.95rem;
+            padding: 0.38rem 0.85rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 500;
             color: var(--text-primary);
         }
@@ -182,17 +185,17 @@
         .nav-btn {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            padding: 0.5rem 0.95rem;
-            border-radius: 10px;
+            padding: 0.42rem 0.85rem;
+            border-radius: 9px;
             color: var(--text-primary);
             cursor: pointer;
             font-family: var(--font-body);
             font-weight: 600;
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
             text-decoration: none;
         }
 
@@ -210,9 +213,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
             transition: all 0.2s ease;
         }
 
@@ -225,8 +228,8 @@
         /* Workspace Grid Container */
         .workspace-wrapper {
             width: 100%;
-            max-width: 1220px;
-            padding: 2.25rem 2rem 3.5rem 2rem;
+            max-width: 1300px;
+            padding: 2.25rem 2.5rem 4rem 2.5rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -234,15 +237,15 @@
 
         .workspace-intro {
             text-align: left;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0;
         }
 
         .workspace-intro h1 {
             font-family: var(--font-display);
-            font-size: 2rem;
+            font-size: 1.85rem;
             font-weight: 800;
-            letter-spacing: -0.6px;
-            margin: 0 0 0.4rem 0;
+            letter-spacing: -0.5px;
+            margin: 0 0 0.35rem 0;
             color: var(--text-primary);
         }
 
@@ -266,13 +269,13 @@
             }
         }
 
-        /* Luxury Cards */
+        /* Luxury Panels */
         .hub-panel {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-lg);
-            padding: 1.75rem;
-            box-shadow: var(--card-shadow);
+            padding: 1.85rem 2rem;
+            box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.07), 0 0 1px 1px rgba(0, 0, 0, 0.03);
             backdrop-filter: blur(12px);
             transition: all 0.3s ease;
             display: flex;
@@ -285,20 +288,20 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.65rem;
             border-bottom: 1px solid var(--card-border);
         }
 
         .panel-header-title {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.6rem;
         }
 
         .panel-icon-wrap {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
             background: var(--brand-gold-light);
             color: var(--brand-gold);
             display: flex;
@@ -309,18 +312,18 @@
 
         .panel-header h2 {
             font-family: var(--font-display);
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
             margin: 0;
             color: var(--text-primary);
         }
 
         .badge-counter {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             background: var(--card-inner-bg);
             border: 1px solid var(--card-border);
-            padding: 0.25rem 0.65rem;
+            padding: 0.22rem 0.6rem;
             border-radius: 9999px;
             color: var(--text-secondary);
         }
@@ -329,11 +332,11 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .control-label {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
@@ -357,13 +360,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.8rem 1.1rem;
+            padding: 0.72rem 1rem;
             border-radius: var(--radius-md);
             background: var(--card-inner-bg);
             border: 1px solid var(--card-border);
             color: var(--text-primary);
             font-weight: 600;
-            font-size: 0.94rem;
+            font-size: 0.9rem;
             transition: all 0.2s ease;
         }
 
@@ -383,7 +386,9 @@
             height: 8px;
             width: 8px;
         }
-        .arrow::before, .arrow::after {
+
+        .arrow::before,
+        .arrow::after {
             content: "";
             position: absolute;
             bottom: 0px;
@@ -393,10 +398,24 @@
             background: var(--text-muted);
             border-radius: 2px;
         }
-        .arrow::before { left: -3px; transform: rotate(45deg); }
-        .arrow::after { left: 2px; transform: rotate(-45deg); }
-        .open .arrow::before { transform: rotate(-45deg); }
-        .open .arrow::after { transform: rotate(45deg); }
+
+        .arrow::before {
+            left: -3px;
+            transform: rotate(45deg);
+        }
+
+        .arrow::after {
+            left: 2px;
+            transform: rotate(-45deg);
+        }
+
+        .open .arrow::before {
+            transform: rotate(-45deg);
+        }
+
+        .open .arrow::after {
+            transform: rotate(45deg);
+        }
 
         .custom-options {
             position: absolute;
@@ -425,8 +444,8 @@
         }
 
         .custom-option {
-            padding: 0.8rem 1.1rem;
-            font-size: 0.92rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.88rem;
             font-weight: 500;
             color: var(--text-primary);
             cursor: pointer;
@@ -450,8 +469,9 @@
         /* Spacious Luxury Drop Zone */
         .drop-zone {
             border: 2px dashed var(--card-border);
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             padding: 2.25rem 1.5rem;
+            min-height: 220px;
             text-align: center;
             cursor: pointer;
             background: var(--card-inner-bg);
@@ -465,7 +485,8 @@
             overflow: hidden;
         }
 
-        .drop-zone:hover, .drop-zone.dragover {
+        .drop-zone:hover,
+        .drop-zone.dragover {
             border-color: var(--brand-gold);
             background: var(--brand-gold-light);
             box-shadow: 0 0 25px var(--brand-gold-light);
@@ -473,8 +494,8 @@
         }
 
         .drop-icon-aura {
-            width: 64px;
-            height: 64px;
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -482,25 +503,26 @@
             align-items: center;
             justify-content: center;
             color: var(--brand-gold);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
             transition: transform 0.25s ease;
+            margin-bottom: 0.25rem;
         }
 
         .drop-zone:hover .drop-icon-aura {
-            transform: scale(1.1) rotate(-3deg);
+            transform: scale(1.08) rotate(-3deg);
             color: var(--brand-gold-hover);
         }
 
         .drop-title {
             font-family: var(--font-display);
-            font-size: 1.12rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
         }
 
         .drop-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: var(--text-secondary);
             margin: 0;
         }
@@ -509,14 +531,14 @@
             margin-top: 0.5rem;
             display: flex;
             flex-wrap: wrap;
-            gap: 0.4rem;
+            gap: 0.45rem;
             justify-content: center;
         }
 
         .bank-badge {
             font-size: 0.72rem;
             font-weight: 600;
-            padding: 0.25rem 0.6rem;
+            padding: 0.22rem 0.65rem;
             border-radius: 6px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -547,25 +569,25 @@
         .switch-label-wrap {
             display: flex;
             align-items: center;
-            gap: 0.65rem;
+            gap: 0.55rem;
             cursor: pointer;
             user-select: none;
         }
 
         .switch-label-wrap input[type="checkbox"] {
-            width: 1.15rem;
-            height: 1.15rem;
+            width: 1.1rem;
+            height: 1.1rem;
             cursor: pointer;
             accent-color: var(--brand-gold);
         }
 
         .switch-title {
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 0.45rem;
+            gap: 0.4rem;
         }
 
         .pill-badge {
@@ -592,20 +614,20 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             padding: 3px;
-            border-radius: 10px;
+            border-radius: 9px;
             gap: 3px;
         }
 
         .segment-btn {
             flex: 1;
-            padding: 0.45rem 0.75rem;
-            font-size: 0.84rem;
+            padding: 0.38rem 0.75rem;
+            font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-secondary);
             border: none;
             background: none;
             cursor: pointer;
-            border-radius: 8px;
+            border-radius: 7px;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -623,8 +645,8 @@
         .queue-container {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            min-height: 380px;
+            gap: 0.75rem;
+            min-height: 290px;
         }
 
         .empty-queue-state {
@@ -632,17 +654,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 3rem 1.5rem;
+            padding: 2.5rem 1.5rem;
             text-align: center;
             border: 1px dashed var(--card-border);
             border-radius: var(--radius-md);
             background: var(--card-inner-bg);
-            min-height: 290px;
+            min-height: 250px;
         }
 
         .empty-queue-icon {
-            width: 52px;
-            height: 52px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -650,64 +672,66 @@
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
-            margin-bottom: 0.85rem;
+            margin-bottom: 0.75rem;
         }
 
         .empty-queue-title {
             font-family: var(--font-display);
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin: 0 0 0.3rem 0;
+            margin: 0 0 0.25rem 0;
         }
 
         .empty-queue-desc {
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
-            max-width: 320px;
+            max-width: 300px;
             margin: 0;
             line-height: 1.45;
         }
 
         .audit-features-list {
-            margin-top: 1.25rem;
+            margin-top: 1.15rem;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.45rem;
             text-align: left;
             width: 100%;
-            max-width: 340px;
+            max-width: 320px;
         }
 
         .audit-feature-item {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            font-size: 0.82rem;
+            gap: 0.55rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
 
         .audit-feature-icon {
             color: var(--brand-gold);
             flex-shrink: 0;
+            font-weight: bold;
         }
 
-        /* File Item Cards */
+        /* File Item Cards (Fixed Flexbox Shrinking Bug) */
         .file-list {
             display: flex;
             flex-direction: column;
             gap: 0.65rem;
-            max-height: 360px;
+            max-height: 420px;
             overflow-y: auto;
-            padding-right: 4px;
+            padding-right: 6px;
         }
 
         .file-list::-webkit-scrollbar {
-            width: 5px;
+            width: 6px;
         }
+
         .file-list::-webkit-scrollbar-thumb {
             background: var(--card-border);
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .file-card {
@@ -718,9 +742,12 @@
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
             padding: 0.85rem 1.15rem;
+            min-height: 62px;
+            box-sizing: border-box;
+            flex-shrink: 0; /* Prevents cards from collapsing when 50+ files added */
             position: relative;
             overflow: hidden;
-            transition: all 0.25s ease;
+            transition: all 0.2s ease;
         }
 
         .file-card:hover {
@@ -736,22 +763,27 @@
         }
 
         @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .file-card-left {
             display: flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0.75rem;
             min-width: 0;
             flex: 1;
         }
 
         .file-icon-box {
-            width: 38px;
-            height: 38px;
-            border-radius: 9px;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
             display: flex;
@@ -763,7 +795,8 @@
         .file-details {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
+            justify-content: center;
             min-width: 0;
             flex: 1;
         }
@@ -777,34 +810,38 @@
 
         .file-name {
             font-weight: 600;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.3;
         }
 
         .file-size-tag {
-            font-size: 0.74rem;
+            font-size: 0.76rem;
             color: var(--text-muted);
             white-space: nowrap;
+            line-height: 1.2;
         }
 
         .file-stage-text {
             color: var(--accent);
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            line-height: 1.2;
         }
 
         .audit-status-tag {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            line-height: 1.2;
         }
 
         .audit-status-tag.balanced {
@@ -818,21 +855,21 @@
         .file-card-right {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.45rem;
             flex-shrink: 0;
         }
 
         .status-badge {
-            font-size: 0.74rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 0.3rem 0.65rem;
+            padding: 0.28rem 0.6rem;
             border-radius: 6px;
             text-transform: uppercase;
             letter-spacing: 0.4px;
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            min-width: 74px;
+            min-width: 72px;
             justify-content: center;
         }
 
@@ -862,8 +899,8 @@
             border: 1px solid var(--card-border);
             color: var(--text-secondary);
             cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 8px;
+            padding: 0.35rem;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -881,12 +918,12 @@
             border: 1px solid var(--brand-gold);
             color: #ffffff;
             cursor: pointer;
-            padding: 0.4rem 0.65rem;
-            border-radius: 8px;
+            padding: 0.35rem 0.65rem;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            font-size: 0.78rem;
+            font-size: 0.76rem;
             font-weight: 600;
             transition: all 0.2s;
             box-shadow: 0 2px 6px var(--brand-gold-glow);
@@ -912,10 +949,10 @@
             background: var(--brand-gold);
             color: #ffffff;
             border: none;
-            padding: 0.45rem 0.95rem;
+            padding: 0.4rem 0.85rem;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.82rem;
+            font-size: 0.78rem;
             font-family: var(--font-body);
             cursor: pointer;
             display: none;
@@ -932,23 +969,23 @@
 
         .primary-action-btn {
             width: 100%;
-            padding: 0.95rem;
+            padding: 0.85rem;
             border-radius: var(--radius-md);
             background: linear-gradient(135deg, var(--brand-gold) 0%, #9c753b 100%);
             color: #ffffff;
             font-family: var(--font-display);
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1rem;
             letter-spacing: 0.3px;
             border: none;
             cursor: pointer;
             transition: all 0.25s ease;
-            box-shadow: 0 6px 20px var(--brand-gold-glow);
+            box-shadow: 0 6px 18px var(--brand-gold-glow);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
         }
 
         .primary-action-btn:hover:not(:disabled) {
@@ -969,15 +1006,15 @@
         .executive-notice-banner {
             display: flex;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.65rem;
             background: rgba(179, 139, 77, 0.08);
             border: 1px solid rgba(179, 139, 77, 0.25);
             color: #92672b;
-            padding: 0.8rem 1rem;
+            padding: 0.65rem 0.85rem;
             border-radius: var(--radius-md);
-            font-size: 0.82rem;
-            line-height: 1.45;
-            margin-top: 0.25rem;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            margin-top: 0;
         }
 
         body.dark-mode .executive-notice-banner {
@@ -1006,10 +1043,13 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Top Navigation Bar -->
     <nav class="top-navbar">
@@ -1025,14 +1065,35 @@
         <div class="nav-right-actions">
             {% if user.is_staff %}
             <a href="/admin/" class="nav-btn" target="_blank" title="Open Admin & Conversion Audit Logs">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
                 Audit Log
             </a>
             {% endif %}
 
             <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">
-                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
             </button>
 
             <div class="user-pill">
@@ -1043,7 +1104,12 @@
             <form action="{% url 'logout' %}" method="post" style="margin: 0;">
                 {% csrf_token %}
                 <button type="submit" class="nav-btn" title="Sign out">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                     Logout
                 </button>
             </form>
@@ -1052,10 +1118,7 @@
 
     <!-- Workspace Main Body -->
     <main class="workspace-wrapper">
-        <div class="workspace-intro">
-            <h1>Financial Statement Conversion & Audit</h1>
-            <p>Convert bank PDF statements into balanced accounting ledgers with automatic mathematical verification.</p>
-        </div>
+
 
         <form id="uploadForm" class="main-dashboard-grid" onsubmit="return false;">
             {% csrf_token %}
@@ -1065,7 +1128,13 @@
                 <div class="panel-header">
                     <div class="panel-header-title">
                         <div class="panel-icon-wrap">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
                         </div>
                         <h2>Upload & Configure</h2>
                     </div>
@@ -1076,7 +1145,8 @@
                 <div class="control-group">
                     <label class="control-label">
                         <span>Select Target Bank</span>
-                        <span style="font-size:0.76rem; color:var(--text-muted); font-weight:normal;">Auto-detection supported</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">Auto-detection
+                            supported</span>
                     </label>
                     <div class="custom-select-wrapper">
                         <div class="custom-select" id="bankCustomSelect">
@@ -1085,7 +1155,8 @@
                                 <div class="arrow"></div>
                             </div>
                             <div class="custom-options">
-                                <span class="custom-option selected" data-value="Auto-Detect">Auto-Detect (Recommended)</span>
+                                <span class="custom-option selected" data-value="Auto-Detect">Auto-Detect
+                                    (Recommended)</span>
                                 <span class="custom-option" data-value="ABA">ABA Bank</span>
                                 <span class="custom-option" data-value="ACLEDA">ACLEDA Bank</span>
                                 <span class="custom-option" data-value="BRED">BRED Bank</span>
@@ -1100,7 +1171,12 @@
                 <!-- Expansive Drag and Drop Area -->
                 <div class="drop-zone" id="dropZone">
                     <div class="drop-icon-aura">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
                     </div>
                     <p class="drop-title">Drag & Drop Bank Statements</p>
                     <p class="drop-subtitle">or click anywhere to select PDF files from your computer</p>
@@ -1117,11 +1193,14 @@
                 <!-- Settings Controls -->
                 <div class="options-grid">
                     <div class="option-row">
-                        <label class="switch-label-wrap" for="use_ocr" title="Reconstruct complex Khmer font ligatures and sub-vowels with OCR">
-                            <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else %}disabled{% endif %}>
+                        <label class="switch-label-wrap" for="use_ocr"
+                            title="Reconstruct complex Khmer font ligatures and sub-vowels with OCR">
+                            <input type="checkbox" name="use_ocr" id="use_ocr" {% if ocr_available %}checked{% else
+                                %}disabled{% endif %}>
                             <span class="switch-title">
                                 Khmer Ligature OCR
-                                <span class="pill-badge {% if ocr_available %}pill-active{% else %}pill-disabled{% endif %}">
+                                <span
+                                    class="pill-badge {% if ocr_available %}pill-active{% else %}pill-disabled{% endif %}">
                                     {% if ocr_available %}Active{% else %}Unavailable{% endif %}
                                 </span>
                             </span>
@@ -1133,7 +1212,8 @@
                         </label>
                     </div>
 
-                    <div class="option-row" style="margin-top:0.35rem; border-top:1px dashed var(--card-border); padding-top:0.75rem;">
+                    <div class="option-row"
+                        style="margin-top:0.25rem; border-top:1px dashed var(--card-border); padding-top:0.65rem;">
                         <span class="control-label" style="margin:0;">Export Format:</span>
                         <div class="segmented-control">
                             <button type="button" class="segment-btn active" data-format="csv" id="formatCsvBtn">
@@ -1153,15 +1233,29 @@
                 <div class="panel-header">
                     <div class="panel-header-title">
                         <div class="panel-icon-wrap" style="background:var(--success-bg); color:var(--success);">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
                         </div>
                         <h2>Conversion & Audit Ledger</h2>
                     </div>
-                    
+
                     <div style="display:flex; align-items:center; gap:0.5rem;">
                         <span class="badge-counter" id="queueBadgeCount">0 files</span>
                         <button type="button" class="zip-all-btn" id="zipBtn">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
                             Download All (.zip)
                         </button>
                     </div>
@@ -1172,23 +1266,32 @@
                     <!-- Empty State Placeholder -->
                     <div class="empty-queue-state" id="emptyQueueState">
                         <div class="empty-queue-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                <polyline points="13 2 13 9 20 9"></polyline>
+                            </svg>
                         </div>
                         <p class="empty-queue-title">No statements in queue</p>
-                        <p class="empty-queue-desc">Select or drop PDF statements on the left to review files, audit balances, and export data.</p>
-                        
+                        <p class="empty-queue-desc">Select or drop PDF statements on the left to review files, audit
+                            balances, and export data.</p>
+
                         <div class="audit-features-list">
                             <div class="audit-feature-item">
                                 <span class="audit-feature-icon">✓</span>
-                                <span><strong>Mathematical Reconciliation:</strong> Verifies running balance line-by-line.</span>
+                                <span><strong>Mathematical Reconciliation:</strong> Verifies running balance
+                                    line-by-line.</span>
                             </div>
                             <div class="audit-feature-item">
                                 <span class="audit-feature-icon">✓</span>
-                                <span><strong>High-Precision Khmer OCR:</strong> Reconstructs ligature remarks accurately.</span>
+                                <span><strong>High-Precision Khmer OCR:</strong> Reconstructs ligature remarks
+                                    accurately.</span>
                             </div>
                             <div class="audit-feature-item">
                                 <span class="audit-feature-icon">✓</span>
-                                <span><strong>Batch Export:</strong> Download individual CSV/Excel or all in one ZIP.</span>
+                                <span><strong>Batch Export:</strong> Download individual CSV/Excel or all in one
+                                    ZIP.</span>
                             </div>
                         </div>
                     </div>
@@ -1199,18 +1302,24 @@
 
                 <!-- Primary Convert Action Button -->
                 <button type="button" id="processBtn" class="primary-action-btn" disabled>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                     <span id="processBtnText">Select Statements to Begin</span>
                 </button>
 
                 <!-- Professional Disclaimer Banner -->
                 <div class="executive-notice-banner">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        style="flex-shrink:0; margin-top:1px;">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <span><strong>Auditing Notice:</strong> Automated conversion & OCR results should always be verified against official bank statements before final bookkeeping and ledger reconciliation.</span>
+                    <span><strong>Auditing Notice:</strong> Automated conversion & OCR results should always be verified
+                        against official bank statements before final bookkeeping and ledger reconciliation.</span>
                 </div>
             </section>
         </form>
@@ -1222,13 +1331,13 @@
         const customOptions = document.querySelectorAll('.custom-option');
         const bankInput = document.getElementById('bank_input');
         const bankDisplay = document.getElementById('bank_display');
-        
-        customSelect.addEventListener('click', function() {
+
+        customSelect.addEventListener('click', function () {
             this.classList.toggle('open');
         });
-        
+
         for (const option of customOptions) {
-            option.addEventListener('click', function(e) {
+            option.addEventListener('click', function (e) {
                 e.stopPropagation();
                 if (!this.classList.contains('selected')) {
                     const selected = this.parentNode.querySelector('.custom-option.selected');
@@ -1240,8 +1349,8 @@
                 customSelect.classList.remove('open');
             });
         }
-        
-        window.addEventListener('click', function(e) {
+
+        window.addEventListener('click', function (e) {
             if (!customSelect.contains(e.target)) {
                 customSelect.classList.remove('open');
             }
@@ -1251,14 +1360,14 @@
         const themeToggle = document.getElementById('themeToggle');
         const moonIcon = document.getElementById('moonIcon');
         const sunIcon = document.getElementById('sunIcon');
-        
+
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
             document.body.classList.add('dark-mode');
             moonIcon.style.display = 'none';
             sunIcon.style.display = 'block';
         }
-        
+
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
@@ -1334,7 +1443,7 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        window.removeFile = function(id) {
+        window.removeFile = function (id) {
             const idx = selectedFiles.findIndex(f => f.id === id);
             if (idx !== -1) {
                 selectedFiles.splice(idx, 1);
@@ -1430,7 +1539,7 @@
 
                         ${f.status === 'success' ? `
                         <button type="button" class="dl-card-btn" id="dl-${f.id}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             Export
                         </button>` : ''}
                     </div>
@@ -1566,13 +1675,13 @@
 
                         const blob = await response.blob();
                         const downloadUrl = window.URL.createObjectURL(blob);
-                        
+
                         let filename = f.file.name.replace('.pdf', exportFormat === 'excel' ? '.xlsx' : '.csv');
                         const disposition = response.headers.get('Content-Disposition');
                         if (disposition && disposition.indexOf('filename=') !== -1) {
                             let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                             let matches = filenameRegex.exec(disposition);
-                            if (matches != null && matches[1]) { 
+                            if (matches != null && matches[1]) {
                                 filename = matches[1].replace(/['"]/g, '');
                             }
                         }
@@ -1610,17 +1719,17 @@
         zipBtn.addEventListener('click', () => {
             const successes = selectedFiles.filter(f => f.status === 'success');
             if (successes.length === 0) return;
-            
+
             const zip = new JSZip();
             successes.forEach(f => {
                 zip.file(f.filename, f.blob);
             });
-            
+
             zipBtn.disabled = true;
             const originalText = zipBtn.innerHTML;
             zipBtn.innerHTML = '<span class="spinner-ring"></span> Zipping...';
-            
-            zip.generateAsync({type:"blob"}).then(function(content) {
+
+            zip.generateAsync({ type: "blob" }).then(function (content) {
                 saveAs(content, "CBVH_Bank_Statements.zip");
                 zipBtn.disabled = false;
                 zipBtn.innerHTML = originalText;
@@ -1628,4 +1737,5 @@
         });
     </script>
 </body>
+
 </html>
