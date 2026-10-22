@@ -25,7 +25,15 @@ def custom_sync_user_relations(user, ldap_attributes, **kwargs):
     # If they are not in the group, their account is instantly deactivated, rejecting their login.
     user.is_active = is_authorized
     
-    user.is_staff = False
-    user.is_superuser = False
-    
+    # Designated domain administrator usernames (case-insensitive)
+    ADMIN_USERNAMES = {'dina.lim', 'admin'}
+
+    # Preserve admin permissions if already granted in /admin/, or grant if in ADMIN_USERNAMES
+    if user.username.lower() in ADMIN_USERNAMES or user.is_staff or user.is_superuser:
+        user.is_staff = True
+        user.is_superuser = True
+    else:
+        user.is_staff = False
+        user.is_superuser = False
+
     user.save()
