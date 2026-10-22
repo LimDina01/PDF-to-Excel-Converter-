@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from .models import ConversionLog
@@ -35,7 +36,8 @@ class ConversionLogAdmin(admin.ModelAdmin):
     )
 
     def formatted_time(self, obj):
-        return obj.timestamp.strftime("%Y-%m-%d %H:%M")
+        local_time = timezone.localtime(obj.timestamp)
+        return local_time.strftime("%Y-%m-%d %H:%M")
     formatted_time.short_description = "Timestamp"
     formatted_time.admin_order_field = "timestamp"
 

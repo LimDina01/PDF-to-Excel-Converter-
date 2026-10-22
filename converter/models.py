@@ -27,4 +27,5 @@ class ConversionLog(models.Model):
 
     def __str__(self):
         user_str = self.user.username if self.user else "System"
-        return f"{self.timestamp.strftime('%Y-%m-%d %H:%M')} - {user_str}: {self.filename} ({self.bank_selected})"
+        local_time = timezone.localtime(self.timestamp)
+        return f"{local_time.strftime('%Y-%m-%d %H:%M')} - {user_str}: {self.filename} ({self.bank_selected})"
